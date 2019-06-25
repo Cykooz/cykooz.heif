@@ -1,4 +1,4 @@
-include README.rst CHANGES.rst
+include README.rst CHANGES.rst LICENSE
 include RELEASE-VERSION version.py
 
 include Cargo.toml pyproject.toml requirements-dev.txt

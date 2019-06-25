@@ -1,0 +1,9 @@
+#include README.rst CHANGES.rst
+#include RELEASE-VERSION version.py
+
+include Cargo.toml
+recursive-include src *
+recursive-include cykooz *
+
+global-exclude __pycache__ *.py[cod]
+global-exclude .DS_Store *.so

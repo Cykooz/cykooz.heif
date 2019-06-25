@@ -1,0 +1,19 @@
+[package]
+name = "rust2py"
+version = "0.1.0"
+authors = ["Kirill Kuzminykh <cykooz@gmail.com>"]
+edition = "2018"
+
+
+[lib]
+name = "rust2py"
+crate-type = ["cdylib"]
+
+
+[dependencies.libheif-rs]
+#libheif-rs = "0.2.1"
+path = "/home/cykooz/CLionProjects/libheif-rs"
+
+[dependencies.pyo3]
+version = "0.7.0"
+features = ["extension-module"]

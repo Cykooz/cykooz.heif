@@ -5,7 +5,7 @@ cykooz.heif
 cykooz.heif is simple python wrapper for the library `libheif-rs <https://crates.io/crates/libheif-rs>`_.
 
 Examples
---------
+********
 
 .. code-block:: python
 
@@ -29,3 +29,4 @@ Examples
     assert img.size == (3024, 4032)
     assert img.mode == 'RGB'
     img.save('test.jpg', 'JPEG')
+

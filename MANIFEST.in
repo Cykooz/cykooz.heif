@@ -1,9 +1,13 @@
-#include README.rst CHANGES.rst
-#include RELEASE-VERSION version.py
+include README.rst CHANGES.rst
+include RELEASE-VERSION version.py
 
-include Cargo.toml
+include Cargo.toml pyproject.toml requirements-dev.txt
 recursive-include src *
 recursive-include cykooz *
 
 global-exclude __pycache__ *.py[cod]
 global-exclude .DS_Store *.so
+
+exclude make_release.sh
+exclude tests
+recursive-exclude tests *

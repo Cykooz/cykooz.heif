@@ -11,8 +11,8 @@ crate-type = ["cdylib"]
 
 
 [dependencies.libheif-rs]
-#libheif-rs = "0.2.1"
-path = "/home/cykooz/CLionProjects/libheif-rs"
+version = "0.3.0"
+
 
 [dependencies.pyo3]
 version = "0.7.0"

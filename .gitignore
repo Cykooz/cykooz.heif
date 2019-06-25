@@ -26,6 +26,7 @@ var/
 target/
 *.egg-info/
 *.egg
+RELEASE-VERSION
 
 .*
 !/.gitignore

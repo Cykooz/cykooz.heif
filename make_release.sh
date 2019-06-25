@@ -18,7 +18,7 @@ ${PYTHON} setup.py -q sdist bdist_wheel
 echo
 echo "Check dists by Twine"
 ${TWINE} check dist/*
-rm -rf dist build
+#rm -rf dist build
 
 
 #echo

@@ -5,7 +5,7 @@
 """
 from PIL import Image
 
-from .heif_image import HeifImage
+from .image import HeifImage
 from .typing import PathLike
 
 

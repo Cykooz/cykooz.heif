@@ -19,12 +19,19 @@ except ImportError:
 HERE = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(HERE)
 
+import version
+
+
+README = open(os.path.join(HERE, 'README.rst'), 'rt').read()
+CHANGES = open(os.path.join(HERE, 'CHANGES.rst'), 'rt').read()
+
+
 setup(
     name='cykooz.heif',
-    version='0.1.0',
-    description='',
-    # long_description=README + '\n\n' + CHANGES,
-    # long_description_content_type='text/x-rst',
+    version=version.get_version(),
+    description='A simple python wrapper above Rust library "libheif-rs"',
+    long_description=README + '\n\n' + CHANGES,
+    long_description_content_type='text/x-rst',
     keywords='',
     author='Kirill Kuzminykh',
     author_email='cykooz@gmail.com',

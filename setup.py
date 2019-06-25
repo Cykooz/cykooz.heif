@@ -35,7 +35,7 @@ setup(
     keywords='',
     author='Kirill Kuzminykh',
     author_email='cykooz@gmail.com',
-    # url='',
+    url='https://github.com/Cykooz/cykooz.heif',
     package_dir={'': '.'},
     packages=find_packages(),
     namespace_packages=['cykooz'],

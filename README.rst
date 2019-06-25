@@ -2,7 +2,7 @@
 cykooz.heif
 ***********
 
-cykooz.heif is a python wrapper above Rust library ``libheif-rs``.
+cykooz.heif is a python wrapper above Rust library `libheif-rs <https://crates.io/crates/libheif-rs>`_.
 
 
 Examples

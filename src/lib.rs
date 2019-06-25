@@ -71,11 +71,13 @@ impl HeifImage {
 
     fn get_exif(&self, py: Python) -> PyResult<PyObject> {
         let context = self.heif_context.lock().unwrap();
-        let exif = result2pyresult(get_exif(&context))?;
-
-        match exif {
-            Some(exif) => Ok(PyBytes::new(py, &exif[4..]).into()),
-            None => Ok(py.None()),
+        let handle = result2pyresult(context.primary_image_handle())?;
+        let meta_ids = handle.list_of_metadata_block_ids("Exif", 1);
+        if meta_ids.is_empty() {
+            Ok(py.None())
+        } else {
+            let exif = result2pyresult(handle.metadata(meta_ids[0]))?;
+            Ok(PyBytes::new(py, &exif[4..]).into())
         }
     }
 }
@@ -91,17 +93,6 @@ impl HeifImage {
 #[pyfunction]
 fn open_heif_file(py: Python, path: &str) -> PyResult<HeifImage> {
     result2pyresult(py.allow_threads(move || open_heif_impl(path)))
-}
-
-fn get_exif(context: &HeifContext) -> Result<Option<Vec<u8>>, HeifError> {
-    let handle = context.primary_image_handle()?;
-    let meta_ids = handle.list_of_metadata_block_ids("Exif", 1);
-    if meta_ids.is_empty() {
-        Ok(None)
-    } else {
-        let exif = handle.metadata(meta_ids[0])?;
-        Ok(Some(exif))
-    }
 }
 
 fn open_heif_impl(path: &str) -> Result<HeifImage, HeifError> {

@@ -8,6 +8,7 @@ from pathlib import Path
 import piexif
 import pytest
 
+from cykooz.heif.errors import HeifError
 from cykooz.heif.image import HeifImage
 from cykooz.heif.utils import get_pil_image
 
@@ -39,6 +40,6 @@ def test_get_pillow_image(data_path):
 
 
 def test_get_pillow_image_errors(data_path):
-    with pytest.raises(RuntimeError):
+    with pytest.raises(HeifError):
         get_pil_image(data_path / 'not_found.heic')
 

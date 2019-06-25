@@ -8,13 +8,17 @@ from typing import Optional
 
 from cykooz.heif.rust2py import open_heif_file, HeifImage as _RustHeifImage
 
+from .errors import HeifError
 from .typing import PathLike
 
 
 class HeifImage:
 
     def __init__(self, path: PathLike):
-        self._image: _RustHeifImage = open_heif_file(os.fspath(path))
+        try:
+            self._image: _RustHeifImage = open_heif_file(os.fspath(path))
+        except RuntimeError as e:
+            raise HeifError(*e.args) from e
         self._exif = None
         self._is_exif_loaded = False
         self._data = None
@@ -37,14 +41,20 @@ class HeifImage:
     @property
     def exif(self) -> Optional[bytes]:
         if not self._is_exif_loaded:
-            self._exif = self._image.get_exif()
+            try:
+                self._exif = self._image.get_exif()
+            except RuntimeError as e:
+                raise HeifError(*e.args) from e
             self._is_exif_loaded = True
         return self._exif
 
     def _load_plane(self):
         if self._is_data_loaded:
             return
-        self._data, self._stride, self._bits_per_pixel = self._image.get_data()
+        try:
+            self._data, self._stride, self._bits_per_pixel = self._image.get_data()
+        except RuntimeError as e:
+            raise HeifError(*e.args) from e
         self._is_data_loaded = True
 
     @property

@@ -14,6 +14,14 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Added exception ``HeifError``.
+
 0.1 (2019-06-25)
 ================
 

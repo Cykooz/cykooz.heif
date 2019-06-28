@@ -4,9 +4,9 @@
 :Date: 25.06.2019
 """
 import os
-from typing import Optional
+from typing import Optional, BinaryIO
 
-from cykooz.heif.rust2py import open_heif_file, HeifImage as _RustHeifImage
+from cykooz.heif.rust2py import open_heif_from_path, open_heif_from_reader, HeifImage as _RustHeifImage
 
 from .errors import HeifError
 from .typing import PathLike
@@ -14,17 +14,33 @@ from .typing import PathLike
 
 class HeifImage:
 
-    def __init__(self, path: PathLike):
-        try:
-            self._image: _RustHeifImage = open_heif_file(os.fspath(path))
-        except RuntimeError as e:
-            raise HeifError(*e.args) from e
+    def __init__(self, image: _RustHeifImage):
+        self._image = image
         self._exif = None
         self._is_exif_loaded = False
         self._data = None
         self._stride = None
         self._bits_per_pixel = None
         self._is_data_loaded = False
+
+    @classmethod
+    def from_path(cls, path: PathLike):
+        try:
+            image: _RustHeifImage = open_heif_from_path(os.fspath(path))
+        except RuntimeError as e:
+            raise HeifError(*e.args)
+        return cls(image)
+
+    @classmethod
+    def from_stream(cls, stream: BinaryIO, total_size: int = None):
+        if total_size is None:
+            total_size: int = stream.seek(0, os.SEEK_END)
+            stream.seek(0, os.SEEK_SET)
+        try:
+            image: _RustHeifImage = open_heif_from_reader(stream, total_size)
+        except RuntimeError as e:
+            raise HeifError(*e.args)
+        return cls(image)
 
     @property
     def width(self) -> int:
@@ -44,7 +60,7 @@ class HeifImage:
             try:
                 self._exif = self._image.get_exif()
             except RuntimeError as e:
-                raise HeifError(*e.args) from e
+                raise HeifError(*e.args)
             self._is_exif_loaded = True
         return self._exif
 
@@ -54,7 +70,7 @@ class HeifImage:
         try:
             self._data, self._stride, self._bits_per_pixel = self._image.get_data()
         except RuntimeError as e:
-            raise HeifError(*e.args) from e
+            raise HeifError(*e.args)
         self._is_data_loaded = True
 
     @property

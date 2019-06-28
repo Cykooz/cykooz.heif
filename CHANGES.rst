@@ -14,6 +14,14 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Features
+--------
+
+- Added method for reading HeifImage from file-like object.
+
 0.2 (2019-06-25)
 ================
 

@@ -10,7 +10,7 @@ from .typing import PathLike
 
 
 def get_pil_image(path: PathLike) -> Image.Image:
-    heif_image = HeifImage(path)
+    heif_image = HeifImage.from_path(path)
     mode = heif_image.mode
     image = Image.frombytes(
         mode, (heif_image.width, heif_image.height), heif_image.data,

@@ -18,14 +18,37 @@ def data_path_fixture() -> Path:
     return Path(__file__).parent / 'data'
 
 
-def test_heif_image(data_path):
-    img = HeifImage(data_path / 'test.heic')
+def test_heif_image_form_path(data_path):
+    img = HeifImage.from_path(data_path / 'test.heic')
     assert img.width == 3024
     assert img.height == 4032
     assert img.mode == 'RGB'
     assert len(img.data) == 36578304
     assert img.stride == 9072
     assert len(img.exif) == 2026
+
+
+def test_heif_image_form_reader(data_path):
+    img_path = data_path / 'test.heic'
+    with img_path.open('rb') as f:
+        img = HeifImage.from_stream(f)
+        assert img.width == 3024
+        assert img.height == 4032
+        assert img.mode == 'RGB'
+        assert len(img.data) == 36578304
+        assert img.stride == 9072
+        assert len(img.exif) == 2026
+
+
+def test_heif_image_form_reader_errors(data_path):
+    img_path = data_path / 'test.heic'
+    with img_path.open('rb') as f:
+        img = HeifImage.from_stream(f)
+        assert img.width == 3024
+        assert img.height == 4032
+    # File is closed
+    with pytest.raises(HeifError):
+        _ = img.data
 
 
 def test_get_pillow_image(data_path):
@@ -42,4 +65,3 @@ def test_get_pillow_image(data_path):
 def test_get_pillow_image_errors(data_path):
     with pytest.raises(HeifError):
         get_pil_image(data_path / 'not_found.heic')
-

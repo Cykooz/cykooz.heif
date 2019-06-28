@@ -1,10 +1,14 @@
 use std::sync::{Arc, Mutex};
 
-use libheif_rs::{Chroma, ColorSpace, HeifContext, HeifError};
+use crate::stream::StreamFromPy;
+use libheif_rs::{Chroma, ColorSpace, HeifContext, HeifError, Reader, StreamReader};
 use pyo3::exceptions;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
 use pyo3::wrap_pyfunction;
+use std::io::BufReader;
+
+mod stream;
 
 fn result2pyresult<T>(res: Result<T, HeifError>) -> PyResult<T> {
     match res {
@@ -18,10 +22,13 @@ fn result2pyresult<T>(res: Result<T, HeifError>) -> PyResult<T> {
 #[pyclass]
 struct HeifImage {
     heif_context: Arc<Mutex<HeifContext>>,
+    /// Image mode.
     #[pyo3(get)]
     mode: String,
+    /// Image width.
     #[pyo3(get)]
     width: u32,
+    /// Image height.
     #[pyo3(get)]
     height: u32,
 }
@@ -82,7 +89,7 @@ impl HeifImage {
     }
 }
 
-/// open_heif_file(path: str) -> HeifImage
+/// open_heif_from_path(path: str) -> HeifImage
 /// --
 ///
 /// This function open HEIF file form given path and returns
@@ -91,12 +98,41 @@ impl HeifImage {
 /// :type path: str
 /// :rtype: HeifImage
 #[pyfunction]
-fn open_heif_file(py: Python, path: &str) -> PyResult<HeifImage> {
-    result2pyresult(py.allow_threads(move || open_heif_impl(path)))
+fn open_heif_from_path(py: Python, path: &str) -> PyResult<HeifImage> {
+    result2pyresult(py.allow_threads(move || open_heif_from_path_impl(path)))
 }
 
-fn open_heif_impl(path: &str) -> Result<HeifImage, HeifError> {
+fn open_heif_from_path_impl(path: &str) -> Result<HeifImage, HeifError> {
     let context = HeifContext::read_from_file(path)?;
+    py_image_from_context(context)
+}
+
+/// open_heif_from_reader(reader, total_size: int) -> HeifImage
+/// --
+///
+/// This function open HEIF file form given reader instance and returns
+/// instance of HeifImage.
+///
+/// :type reader: typing.BinaryIO
+/// :type total_size: int
+/// :rtype: HeifImage
+#[pyfunction]
+fn open_heif_from_reader(py: Python, reader: PyObject, total_size: u64) -> PyResult<HeifImage> {
+    let stream_from_py = StreamFromPy {
+        py_stream: reader.clone_ref(py),
+    };
+    let stream_from_py = BufReader::new(stream_from_py);
+    result2pyresult(py.allow_threads(move || {
+        open_heif_context_from_reader_impl(Box::new(StreamReader::new(stream_from_py, total_size)))
+    }))
+}
+
+fn open_heif_context_from_reader_impl(reader: Box<dyn Reader>) -> Result<HeifImage, HeifError> {
+    let context = HeifContext::read_from_reader(reader)?;
+    py_image_from_context(context)
+}
+
+fn py_image_from_context(context: HeifContext) -> Result<HeifImage, HeifError> {
     let handle = context.primary_image_handle()?;
     let width = handle.width();
     let height = handle.height();
@@ -119,7 +155,8 @@ fn open_heif_impl(path: &str) -> Result<HeifImage, HeifError> {
 /// This module is a python module implemented in Rust.
 #[pymodule]
 fn rust2py(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_wrapped(wrap_pyfunction!(open_heif_file))?;
+    m.add_wrapped(wrap_pyfunction!(open_heif_from_path))?;
+    m.add_wrapped(wrap_pyfunction!(open_heif_from_reader))?;
     m.add_class::<HeifImage>()?;
 
     Ok(())

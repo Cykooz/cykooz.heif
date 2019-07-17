@@ -1,7 +1,7 @@
 include README.rst CHANGES.rst LICENSE
 include RELEASE-VERSION version.py
 
-include Cargo.toml pyproject.toml requirements-dev.txt  rust-toolchaing
+include Cargo.toml pyproject.toml requirements-dev.txt  rust-toolchain
 recursive-include src *
 recursive-include cykooz *
 

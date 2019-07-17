@@ -14,6 +14,16 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Features
+--------
+
+- Added ``RawHeifImage.check_file_type`` to check by first bytes of file
+  what it file is supported by ``libheif``.
+- Added opener plugin for ``Pillow``.
+
 0.3 (2019-06-28)
 ================
 

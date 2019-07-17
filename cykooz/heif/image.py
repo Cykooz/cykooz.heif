@@ -4,15 +4,15 @@
 :Date: 25.06.2019
 """
 import os
-from typing import Optional, BinaryIO
+from typing import BinaryIO, Optional
 
-from cykooz.heif.rust2py import open_heif_from_path, open_heif_from_reader, HeifImage as _RustHeifImage
+from cykooz.heif.rust2py import HeifImage as _RustHeifImage, check_file_type, open_heif_from_path, open_heif_from_reader
 
 from .errors import HeifError
 from .typing import PathLike
 
 
-class HeifImage:
+class RawHeifImage:
 
     def __init__(self, image: _RustHeifImage):
         self._image = image
@@ -41,6 +41,14 @@ class HeifImage:
         except RuntimeError as e:
             raise HeifError(*e.args)
         return cls(image)
+
+    @staticmethod
+    def check_file_type(data: bytes) -> bool:
+        """Check file type by it first bytes.
+        Input data should be at least 12 bytes.
+        """
+        res = check_file_type(data)
+        return res in ('supported', 'maybe')
 
     @property
     def width(self) -> int:

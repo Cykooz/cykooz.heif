@@ -60,7 +60,7 @@ setup(
         ],
     },
     setup_requires=[
-        'setuptools-rust>=0.10.1',
+        'setuptools-rust>=0.10.6',
         'wheel',
     ],
     install_requires=[

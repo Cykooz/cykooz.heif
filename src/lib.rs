@@ -1,12 +1,16 @@
+use std::io::BufReader;
 use std::sync::{Arc, Mutex};
 
-use crate::stream::StreamFromPy;
-use libheif_rs::{Chroma, ColorSpace, HeifContext, HeifError, Reader, StreamReader};
+use libheif_rs;
+use libheif_rs::{
+    Chroma, ColorSpace, FileTypeResult, HeifContext, HeifError, Reader, StreamReader,
+};
 use pyo3::exceptions;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
 use pyo3::wrap_pyfunction;
-use std::io::BufReader;
+
+use crate::stream::StreamFromPy;
 
 mod stream;
 
@@ -152,11 +156,33 @@ fn py_image_from_context(context: HeifContext) -> Result<HeifImage, HeifError> {
     })
 }
 
+/// check_file_type(data: bytes) -> str
+/// --
+///
+/// Check file type by it first bytes.
+/// Input data should be at least 12 bytes.
+///
+/// :type data: bytes
+/// :rtype: str
+#[pyfunction]
+fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
+    let py_bytes = data.cast_as::<PyBytes>(py)?;
+    let bytes = py_bytes.as_bytes();
+    let res = libheif_rs::check_file_type(bytes);
+    Ok(match res {
+        FileTypeResult::No => "no".into(),
+        FileTypeResult::Supported => "supported".into(),
+        FileTypeResult::Unsupported => "unsupported".into(),
+        FileTypeResult::MayBe => "maybe".into(),
+    })
+}
+
 /// This module is a python module implemented in Rust.
 #[pymodule]
 fn rust2py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(open_heif_from_path))?;
     m.add_wrapped(wrap_pyfunction!(open_heif_from_reader))?;
+    m.add_wrapped(wrap_pyfunction!(check_file_type))?;
     m.add_class::<HeifImage>()?;
 
     Ok(())

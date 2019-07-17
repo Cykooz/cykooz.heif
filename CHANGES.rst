@@ -14,6 +14,14 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Bug Fixes
+---------
+
+- Added checking of image type inside of ``HeifImageFile._open()``.
+
 0.4 (2019-07-17)
 ================
 

@@ -5,6 +5,7 @@
 """
 from PIL import Image, ImageFile
 
+from .errors import HeifError
 from .image import RawHeifImage
 
 
@@ -13,7 +14,15 @@ class HeifImageFile(ImageFile.ImageFile):
     format_description = "HEIF/HEIC image"
 
     def _open(self):
-        raw_heif_image = RawHeifImage.from_stream(self.fp)
+        data = self.fp.read(16)
+        if len(data) < 12 or not RawHeifImage.check_file_type(data):
+            raise SyntaxError('not a HEIF file')
+
+        self.fp.seek(0)
+        try:
+            raw_heif_image = RawHeifImage.from_stream(self.fp)
+        except HeifError:
+            raise SyntaxError('not a HEIF file')
 
         # size in pixels (width, height)
         self._size = raw_heif_image.width, raw_heif_image.height
@@ -32,7 +41,6 @@ class HeifImageFile(ImageFile.ImageFile):
 
 
 class HeifDecoder(ImageFile.PyDecoder):
-
     _pulls_fd = True
 
     def decode(self, buffer):

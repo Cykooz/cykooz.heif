@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 
 use libheif_rs;
 use libheif_rs::{
-    Chroma, ColorSpace, FileTypeResult, HeifContext, HeifError, Reader, StreamReader,
+    ColorSpace, FileTypeResult, HeifContext, HeifError, Reader, RgbChroma, StreamReader,
 };
 use pyo3::exceptions;
 use pyo3::prelude::*;
@@ -51,11 +51,11 @@ impl HeifImage {
             let context = context_mutex.lock().unwrap();
             let handle = context.primary_image_handle()?;
             let chroma = if handle.has_alpha_channel() {
-                Chroma::InterleavedRgba
+                RgbChroma::Rgba
             } else {
-                Chroma::InterleavedRgb
+                RgbChroma::Rgb
             };
-            handle.decode(ColorSpace::RGB, chroma)
+            handle.decode(ColorSpace::Rgb(chroma))
         });
 
         let image = result2pyresult(image)?;

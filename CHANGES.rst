@@ -14,6 +14,14 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.6.
+
 0.4.2 (2019-07-17)
 ==================
 

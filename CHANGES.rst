@@ -14,6 +14,15 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``pyo3`` to 0.8.
+- Updated version of ``libheif-rs`` to 0.8.
+
 0.5 (2019-08-28)
 ================
 

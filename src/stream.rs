@@ -72,9 +72,7 @@ impl io::Seek for StreamFromPy {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::result2pyresult;
     use pyo3::types::IntoPyDict;
-    use pyo3::AsPyPointer;
     use std::io::{Read, Seek};
 
     #[test]
@@ -86,7 +84,7 @@ mod tests {
         let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
         let result = py.eval(code, None, Some(&locals))?;
         let mut stream_from_py = StreamFromPy {
-            py_stream: result.into_object(py),
+            py_stream: result.into_py(py),
         };
         let mut buf = vec![0u8; 100];
 
@@ -116,7 +114,7 @@ mod tests {
         let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
         let result = py.eval(code, None, Some(&locals))?;
         let mut stream_from_py = StreamFromPy {
-            py_stream: result.into_object(py),
+            py_stream: result.into_py(py),
         };
 
         let pos = stream_from_py.seek(io::SeekFrom::Start(0))?;
@@ -143,5 +141,4 @@ mod tests {
 
         Ok(())
     }
-
 }

@@ -2,9 +2,7 @@ use std::io::BufReader;
 use std::sync::{Arc, Mutex};
 
 use libheif_rs;
-use libheif_rs::{
-    ColorSpace, FileTypeResult, HeifContext, HeifError, Reader, RgbChroma, StreamReader,
-};
+use libheif_rs::{ColorSpace, FileTypeResult, HeifContext, Reader, RgbChroma, StreamReader};
 use pyo3::exceptions;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
@@ -14,13 +12,8 @@ use crate::stream::StreamFromPy;
 
 mod stream;
 
-fn result2pyresult<T>(res: Result<T, HeifError>) -> PyResult<T> {
-    match res {
-        Ok(res) => Ok(res),
-        Err(heif_error) => Err(PyErr::new::<exceptions::RuntimeError, _>(
-            heif_error.to_string(),
-        )),
-    }
+fn result2pyresult<T>(res: libheif_rs::Result<T>) -> PyResult<T> {
+    res.map_err(|heif_error| PyErr::new::<exceptions::RuntimeError, _>(heif_error.to_string()))
 }
 
 #[pyclass]
@@ -106,7 +99,7 @@ fn open_heif_from_path(py: Python, path: &str) -> PyResult<HeifImage> {
     result2pyresult(py.allow_threads(move || open_heif_from_path_impl(path)))
 }
 
-fn open_heif_from_path_impl(path: &str) -> Result<HeifImage, HeifError> {
+fn open_heif_from_path_impl(path: &str) -> libheif_rs::Result<HeifImage> {
     let context = HeifContext::read_from_file(path)?;
     py_image_from_context(context)
 }
@@ -131,12 +124,12 @@ fn open_heif_from_reader(py: Python, reader: PyObject, total_size: u64) -> PyRes
     }))
 }
 
-fn open_heif_context_from_reader_impl(reader: Box<dyn Reader>) -> Result<HeifImage, HeifError> {
+fn open_heif_context_from_reader_impl(reader: Box<dyn Reader>) -> libheif_rs::Result<HeifImage> {
     let context = HeifContext::read_from_reader(reader)?;
     py_image_from_context(context)
 }
 
-fn py_image_from_context(context: HeifContext) -> Result<HeifImage, HeifError> {
+fn py_image_from_context(context: HeifContext) -> libheif_rs::Result<HeifImage> {
     let handle = context.primary_image_handle()?;
     let width = handle.width();
     let height = handle.height();

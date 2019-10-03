@@ -11,11 +11,11 @@ crate-type = ["cdylib"]
 
 
 [dependencies.libheif-rs]
-version = "0.7"
+version = "0.8"
 
 
 [dependencies.pyo3]
-version = "0.7"
+version = "0.8"
 
 
 [features]

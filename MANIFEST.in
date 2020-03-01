@@ -8,6 +8,8 @@ recursive-include cykooz *
 global-exclude __pycache__ *.py[cod]
 global-exclude .DS_Store *.so
 
-exclude make_release.sh
-exclude tests
+exclude make_release.sh build_wheels.sh
+exclude tests docker wheels
 recursive-exclude tests *
+recursive-exclude docker *
+recursive-exclude wheels *

@@ -32,13 +32,13 @@ struct HeifImage {
 
 #[pymethods]
 impl HeifImage {
-    /// get_data() -> Optional[Tuple[bytes, int, int]]
+    /// get_data(ignore_transformations: bool) -> Optional[Tuple[bytes, int, int]]
     /// --
     ///
     /// Returns tuple with image pixels data, stride and bits per pixel.
     ///
     /// :rtype: Optional[Tuple[bytes, int, int]]
-    fn get_data(&self, py: Python) -> PyResult<PyObject> {
+    fn get_data(&self, py: Python, ignore_transformations: bool) -> PyResult<PyObject> {
         let context_mutex = self.heif_context.clone();
         let image = py.allow_threads(move || {
             let context = context_mutex.lock().unwrap();
@@ -48,7 +48,7 @@ impl HeifImage {
             } else {
                 RgbChroma::Rgb
             };
-            handle.decode(ColorSpace::Rgb(chroma))
+            handle.decode(ColorSpace::Rgb(chroma), ignore_transformations)
         });
 
         let image = result2pyresult(image)?;

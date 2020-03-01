@@ -24,6 +24,7 @@ parts/
 sdist/
 var/
 target/
+wheels/
 *.egg-info/
 *.egg
 RELEASE-VERSION

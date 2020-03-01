@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-TWINE_REPOSITORY='pypi'
+TWINE_REPOSITORY=${1:-pypi}
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${CUR_DIR}"
@@ -19,7 +19,6 @@ echo
 echo "Check dists by Twine"
 ${TWINE} check dist/*
 rm -rf dist build
-
 
 echo
 echo "Check not committed changes"
@@ -60,10 +59,11 @@ then
 fi
 
 echo "Make release"
-${PYTHON} setup.py sdist bdist_wheel
+${PYTHON} setup.py sdist
 TWINE_REPOSITORY=${TWINE_REPOSITORY} ${TWINE} upload dist/*
 rm -rf dist build
 
 cd "${CUR_DIR}"
+./build_wheels.sh "${TWINE_REPOSITORY}"
 
 echo OK

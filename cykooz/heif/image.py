@@ -76,7 +76,7 @@ class RawHeifImage:
         if self._is_data_loaded:
             return
         try:
-            self._data, self._stride, self._bits_per_pixel = self._image.get_data()
+            self._data, self._stride, self._bits_per_pixel = self._image.get_data(False)
         except RuntimeError as e:
             raise HeifError(*e.args)
         self._is_data_loaded = True

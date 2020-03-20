@@ -6,7 +6,10 @@
 import os
 from typing import BinaryIO, Optional
 
-from cykooz.heif.rust2py import HeifImage as _RustHeifImage, check_file_type, open_heif_from_path, open_heif_from_reader
+from cykooz.heif.rust_heif import (
+    HeifImage as _RustHeifImage, check_file_type, open_heif_from_path,
+    open_heif_from_reader
+)
 
 from .errors import HeifError
 from .typing import PathLike

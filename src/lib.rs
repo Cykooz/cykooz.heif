@@ -172,7 +172,7 @@ fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
 
 /// This module is a python module implemented in Rust.
 #[pymodule]
-fn rust2py(_py: Python, m: &PyModule) -> PyResult<()> {
+fn rust_heif(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(open_heif_from_path))?;
     m.add_wrapped(wrap_pyfunction!(open_heif_from_reader))?;
     m.add_wrapped(wrap_pyfunction!(check_file_type))?;

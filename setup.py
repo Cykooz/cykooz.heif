@@ -47,11 +47,10 @@ setup(
     url='https://github.com/Cykooz/cykooz.heif',
     package_dir={'': '.'},
     packages=find_packages(),
-    namespace_packages=['cykooz'],
     include_package_data=True,
     package_data={},
     rust_extensions=[
-        RustExtension('cykooz.heif.rust2py')
+        RustExtension('cykooz.heif.rust_heif')
     ],
     zip_safe=False,
     extras_require={

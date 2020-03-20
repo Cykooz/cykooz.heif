@@ -137,7 +137,7 @@ RUN set -ex \
     && rm -rf /build-deps
 
 
-# Rust Nightly
+# Rust Nightly 1.42
 RUN set -ex \
     && curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
 

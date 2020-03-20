@@ -14,6 +14,19 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``pyo3`` to 0.9.
+
+Bug Fixes
+---------
+
+- Fixed namespace declaration.
+
 0.7 (2020-03-01)
 ================
 

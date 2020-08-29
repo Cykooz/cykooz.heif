@@ -6,7 +6,7 @@ FROM quay.io/pypa/manylinux2014_x86_64
 
 # setup
 RUN set -ex \
-    && yum install wget -y \
+    && yum install wget git perl -y \
     && mkdir /build-tools
 
 # pkg-config
@@ -98,7 +98,7 @@ RUN set -ex \
 RUN set -ex \
     && cd /build-deps \
     && X265_VERSION="3.3" \
-    && wget https://bitbucket.org/multicoreware/x265/downloads/x265_${X265_VERSION}.tar.gz \
+    && wget https://bitbucket.org/multicoreware/x265_git/downloads/x265_${X265_VERSION}.tar.gz \
     && tar xvf x265_${X265_VERSION}.tar.gz \
     && cd x265_${X265_VERSION} \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr -G "Unix Makefiles" ./source \
@@ -109,7 +109,7 @@ RUN set -ex \
 # libde265
 RUN set -ex \
     && cd /build-deps \
-    && LIBDE265_VERSION="1.0.5" \
+    && LIBDE265_VERSION="1.0.6" \
     && wget https://github.com/strukturag/libde265/releases/download/v${LIBDE265_VERSION}/libde265-${LIBDE265_VERSION}.tar.gz \
     && tar xvf libde265-${LIBDE265_VERSION}.tar.gz \
     && cd libde265-${LIBDE265_VERSION} \
@@ -119,10 +119,22 @@ RUN set -ex \
     && make install \
     && ldconfig
 
+# libaom
+RUN set -ex \
+    && cd /build-deps \
+    && LIBOAM_VERSION="1.0.5" \
+    && git clone --depth 1 --branch v2.0.0 https://aomedia.googlesource.com/aom \
+    && mkdir -p ./aom_build \
+    && cd aom_build \
+    && cmake ../aom \
+    && make -j4 \
+    && make install \
+    && ldconfig
+
 # libheif
 RUN set -ex \
     && cd /build-deps \
-    && LIBHEIF_VERSION="1.6.1" \
+    && LIBHEIF_VERSION="1.8.0" \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
     && tar xvf libheif-${LIBHEIF_VERSION}.tar.gz \
     && cd libheif-${LIBHEIF_VERSION} \

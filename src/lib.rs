@@ -1,7 +1,6 @@
 use std::io::BufReader;
 use std::sync::{Arc, Mutex};
 
-use libheif_rs;
 use libheif_rs::{ColorSpace, FileTypeResult, HeifContext, Reader, RgbChroma, StreamReader};
 use pyo3::exceptions;
 use pyo3::prelude::*;

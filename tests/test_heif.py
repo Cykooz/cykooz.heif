@@ -86,7 +86,7 @@ def test_open_pillow_image(data_path, source_type, file_name):
     assert exif['Exif'][42036] == b'iPhone 7 Plus back dual camera 6.6mm f/2.8'
 
     pixel = img.getpixel((100, 100))
-    assert pixel == (73, 74, 69)
+    assert pixel == (73, 73, 69)
 
 
 def test_open_png_as_heif(data_path):

@@ -14,6 +14,17 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.10:
+    - updated version of ``libheif-sys`` to 1.8.1;
+    - added support of new compression format AV1.
+- Updated version of ``pyo3`` to 0.11.1.
+
 0.7.2 (2020-03-20)
 ==================
 

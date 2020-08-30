@@ -14,6 +14,16 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Bug Fixes
+---------
+
+- Fixed building of wheels:
+    - added ``libaom``;
+    - added ``rav1e`` encoder for AV1.
+
 0.8 (2020-08-29)
 ================
 

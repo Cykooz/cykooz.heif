@@ -54,9 +54,9 @@ Installation from source
 
 System requirements:
 
-- Nightly Rust (https://www.rust-lang.org/)
-- libheif-dev >= 1.5 (https://github.com/strukturag/libheif)
-- python3-dev (tested with Python 3.6 and 3.7)
+- libheif-dev >= 1.8 (https://github.com/strukturag/libheif)
+- python3-dev
+- Rust 1.39+ (https://www.rust-lang.org/)
 
 Ubuntu 18.04
 ------------
@@ -65,8 +65,7 @@ Ubuntu 18.04
 
     $ sudo add-apt-repository ppa:strukturag/libheif
     $ sudo apt-get install build-essential python3.7-dev libheif-dev curl
-    $ curl https://sh.rustup.rs -sSf | sh
+    $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     $ source $HOME/.cargo/env
-    $ rustup toolchain install nightly
     $ pip3 install -U setuptools setuptools-rust
     $ PYTHON_SYS_EXECUTABLE=python3 pip3 install cykooz.heif

@@ -104,6 +104,7 @@ RUN set -ex \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr -G "Unix Makefiles" ./source \
     && make -j4 \
     && make install \
+    && strip -s /usr/lib/libx265.so \
     && ldconfig
 
 # libde265
@@ -116,51 +117,61 @@ RUN set -ex \
     && ./autogen.sh \
     && ./configure --prefix /usr \
     && make -j4 \
-    && make install \
+    && make install-strip \
     && ldconfig
 
 # libaom
 RUN set -ex \
     && cd /build-deps \
-    && LIBOAM_VERSION="1.0.5" \
-    && git clone --depth 1 --branch v2.0.0 https://aomedia.googlesource.com/aom \
+    && LIBOAM_VERSION="2.0.0" \
+    && git clone --depth 1 --branch v${LIBOAM_VERSION} https://aomedia.googlesource.com/aom \
     && mkdir -p ./aom_build \
     && cd aom_build \
-    && cmake ../aom \
+    && cmake -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX=/usr ../aom \
     && make -j4 \
     && make install \
+    && strip -s /usr/lib64/libaom.so \
+    && cp /usr/lib64/pkgconfig/aom.pc /usr/lib/pkgconfig/aom.pc \
     && ldconfig
 
-# libheif
+# Rust
+RUN set -ex \
+    && curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+RUN set -ex && source $HOME/.cargo/env \
+    && cargo search --quiet --limit 1 a > /dev/null \
+    && cargo install --force cbindgen
+
+# libheif: step1 - rav1e
+ENV LIBHEIF_VERSION 1.8.0
 RUN set -ex \
     && cd /build-deps \
-    && LIBHEIF_VERSION="1.8.0" \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
     && tar xvf libheif-${LIBHEIF_VERSION}.tar.gz \
     && cd libheif-${LIBHEIF_VERSION} \
-    && ./configure --prefix /usr \
+    && source $HOME/.cargo/env \
+    && mkdir -p third-party \
+    && cd third-party \
+    && wget https://raw.githubusercontent.com/strukturag/libheif/master/third-party/rav1e.cmd \
+    && /bin/bash rav1e.cmd \
+    && cd ..
+
+# libheif: step2 - libheif
+RUN set -ex \
+    && cd /build-deps \
+    && cd libheif-${LIBHEIF_VERSION} \
+    && ./autogen.sh \
+    && ./configure --prefix /usr --enable-local-rav1e \
     && make -j4 \
-    && make install \
+    && make install-strip \
     && ldconfig
-
-# cleanup
-RUN set -ex \
-    && cd / \
-    && rm -rf /build-deps
-
-
-# Rust Nightly 1.42
-RUN set -ex \
-    && curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
-
-ENV CARGO_TARGET_DIR /cargo_target
-RUN set -ex && source $HOME/.cargo/env && cargo search --quiet --limit 1 a > /dev/null
 
 ##########################
 # Build manylinux wheels #
 ##########################
 
 # setup
+ENV CARGO_TARGET_DIR /cargo_target
 RUN mkdir /workdir "${CARGO_TARGET_DIR}"
 
 RUN set -ex \

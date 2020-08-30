@@ -22,7 +22,8 @@ Bug Fixes
 
 - Fixed building of wheels:
     - added ``libaom``;
-    - added ``rav1e`` encoder for AV1.
+    - added ``rav1e`` encoder for AV1;
+    - added stripping of libraries to reduce size of wheels.
 
 0.8 (2020-08-29)
 ================

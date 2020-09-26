@@ -14,6 +14,21 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.11.
+- Updated version of ``pyo3`` to 0.12.1.
+
+Wheels
+------
+
+- Updated version of ``libheif`` to 1.9.1.
+- Added ``dav1d`` decoder for faster decoding of AVIF images.
+
 0.8.3 (2020-08-30)
 ==================
 

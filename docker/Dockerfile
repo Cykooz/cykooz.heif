@@ -110,7 +110,7 @@ RUN set -ex \
 # libde265
 RUN set -ex \
     && cd /build-deps \
-    && LIBDE265_VERSION="1.0.6" \
+    && LIBDE265_VERSION="1.0.7" \
     && wget https://github.com/strukturag/libde265/releases/download/v${LIBDE265_VERSION}/libde265-${LIBDE265_VERSION}.tar.gz \
     && tar xvf libde265-${LIBDE265_VERSION}.tar.gz \
     && cd libde265-${LIBDE265_VERSION} \
@@ -143,7 +143,7 @@ RUN set -ex && source $HOME/.cargo/env \
     && cargo install --force cbindgen
 
 # libheif: step1 - rav1e
-ENV LIBHEIF_VERSION 1.8.0
+ENV LIBHEIF_VERSION 1.9.1
 RUN set -ex \
     && cd /build-deps \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
@@ -153,15 +153,20 @@ RUN set -ex \
     && mkdir -p third-party \
     && cd third-party \
     && wget https://raw.githubusercontent.com/strukturag/libheif/master/third-party/rav1e.cmd \
-    && /bin/bash rav1e.cmd \
-    && cd ..
+    && /bin/bash rav1e.cmd
 
-# libheif: step2 - libheif
+# libheif: step2 - dav1d
+RUN yum install meson -y
 RUN set -ex \
-    && cd /build-deps \
-    && cd libheif-${LIBHEIF_VERSION} \
+    && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party \
+    && wget https://raw.githubusercontent.com/strukturag/libheif/master/third-party/dav1d.cmd \
+    && /bin/bash dav1d.cmd
+
+# libheif: step3 - libheif
+RUN set -ex \
+    && cd /build-deps/libheif-${LIBHEIF_VERSION} \
     && ./autogen.sh \
-    && ./configure --prefix /usr --enable-local-rav1e \
+    && ./configure --prefix /usr --enable-local-rav1e --enable-local-dav1d \
     && make -j4 \
     && make install-strip \
     && ldconfig

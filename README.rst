@@ -46,7 +46,7 @@ Also package provides an opener plugin for ``PIL`` (``Pillow``):
     assert isinstance(img, Image.Image)
     assert img.size == (3024, 4032)
     assert img.mode == 'RGB'
-    assert img.getpixel((100, 100)) == (73, 73, 69)
+    assert img.getpixel((100, 100)) == (73, 74, 69)
     img.save('test.jpg', 'JPEG')
 
 Installation from source
@@ -64,6 +64,7 @@ Ubuntu 18.04
 .. code-block:: console
 
     $ sudo add-apt-repository ppa:strukturag/libheif
+    $ sudo add-apt-repository ppa:strukturag/libde265
     $ sudo apt-get install build-essential python3.7-dev libheif-dev curl
     $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     $ source $HOME/.cargo/env

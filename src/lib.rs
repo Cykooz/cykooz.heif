@@ -12,7 +12,7 @@ use crate::stream::StreamFromPy;
 mod stream;
 
 fn result2pyresult<T>(res: libheif_rs::Result<T>) -> PyResult<T> {
-    res.map_err(|heif_error| PyErr::new::<exceptions::RuntimeError, _>(heif_error.to_string()))
+    res.map_err(|heif_error| PyErr::new::<exceptions::PyRuntimeError, _>(heif_error.to_string()))
 }
 
 #[pyclass]

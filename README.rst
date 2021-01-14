@@ -54,7 +54,7 @@ Installation from source
 
 System requirements:
 
-- libheif-dev >= 1.8 (https://github.com/strukturag/libheif)
+- libheif-dev >= 1.10 (https://github.com/strukturag/libheif)
 - python3-dev
 - Rust 1.39+ (https://www.rust-lang.org/)
 

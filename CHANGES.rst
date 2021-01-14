@@ -14,6 +14,15 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.12.
+- Updated version of ``pyo3`` to 0.13.1 (dropped support of Python 3.5).
+
 0.9 (2020-09-26)
 ================
 

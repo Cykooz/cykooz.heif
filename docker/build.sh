@@ -22,7 +22,7 @@ rm -rf ${WORKDIR}/*
 cp -rf /src "${WORKDIR}/cykooz.heif"
 
 source "$HOME/.cargo/env"
-PYTHONS=("35" "36" "37" "38")
+PYTHONS=("36" "37" "38" "39")
 for PY in "${PYTHONS[@]}"; do
   PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}m/bin/"
   if [ ! -d "${PY_BIN_DIR}" ]; then

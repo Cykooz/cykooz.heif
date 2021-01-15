@@ -1,6 +1,6 @@
 [package]
 name = "rust_heif"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Kirill Kuzminykh <cykooz@gmail.com>"]
 edition = "2018"
 
@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 
 [dependencies.libheif-rs]
-version = "0.12"
+version = "0.13.0"
 
 
 [dependencies.pyo3]

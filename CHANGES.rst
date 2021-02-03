@@ -14,6 +14,14 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.13.1.
+
 0.10.2 (2021-01-15)
 ===================
 

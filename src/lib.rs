@@ -1,7 +1,9 @@
 use std::io::BufReader;
 use std::sync::{Arc, Mutex};
 
-use libheif_rs::{ColorSpace, FileTypeResult, HeifContext, Reader, RgbChroma, StreamReader};
+use libheif_rs::{
+    ColorSpace, FileTypeResult, HeifContext, ItemId, Reader, RgbChroma, StreamReader,
+};
 use pyo3::exceptions;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
@@ -75,8 +77,9 @@ impl HeifImage {
     fn get_exif(&self, py: Python) -> PyResult<PyObject> {
         let context = self.heif_context.lock().unwrap();
         let handle = result2pyresult(context.primary_image_handle())?;
-        let meta_ids = handle.list_of_metadata_block_ids("Exif", 1);
-        if meta_ids.is_empty() {
+        let mut meta_ids: [ItemId; 1] = [0];
+        let count = handle.metadata_block_ids("Exif", &mut meta_ids);
+        if count == 0 {
             Ok(py.None())
         } else {
             let exif = result2pyresult(handle.metadata(meta_ids[0]))?;

@@ -14,6 +14,19 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.14.
+
+Wheels
+------
+
+- Fixed building of ``libheif`` with ``dav1d`` and ``rav1e`` libraries.
+
 0.10 (2021-01-14)
 =================
 

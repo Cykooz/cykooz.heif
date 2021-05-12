@@ -24,7 +24,7 @@ RUN set -ex \
 # libressl
 RUN set -ex \
     && cd /build-tools \
-    && LIBRESSL_VERSION="3.0.2" \
+    && LIBRESSL_VERSION="3.3.3" \
     && wget https://github.com/libressl-portable/portable/archive/v${LIBRESSL_VERSION}.tar.gz \
     && tar xvf v${LIBRESSL_VERSION}.tar.gz \
     && cd portable-${LIBRESSL_VERSION} \
@@ -36,7 +36,7 @@ RUN set -ex \
 # cmake
 RUN set -ex \
     && cd /build-tools \
-    && CMAKE_VERSION="3.16.4" \
+    && CMAKE_VERSION="3.20.2" \
     && wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz \
     && tar xvf cmake-${CMAKE_VERSION}.tar.gz \
     && cd cmake-${CMAKE_VERSION} \
@@ -48,7 +48,7 @@ RUN set -ex \
 # autoconf
 RUN set -ex \
     && cd /build-tools \
-    && AUTOCONF_VERSION="2.69" \
+    && AUTOCONF_VERSION="2.71" \
     && wget https://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VERSION}.tar.gz \
     && tar xvf autoconf-${AUTOCONF_VERSION}.tar.gz \
     && cd autoconf-${AUTOCONF_VERSION} \
@@ -60,7 +60,7 @@ RUN set -ex \
 # automake
 RUN set -ex \
     && cd /build-tools \
-    && AUTOMAKE_VERSION="1.16.1" \
+    && AUTOMAKE_VERSION="1.16.3" \
     && wget https://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VERSION}.tar.gz \
     && tar xvf automake-${AUTOMAKE_VERSION}.tar.gz \
     && cd automake-${AUTOMAKE_VERSION} \
@@ -72,7 +72,7 @@ RUN set -ex \
 # nasm
 RUN set -ex \
     && cd /build-tools \
-    && NASM_VERSION="2.14.02" \
+    && NASM_VERSION="2.15.05" \
     && wget https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VERSION}/nasm-${NASM_VERSION}.tar.gz \
     && tar xvf nasm-${NASM_VERSION}.tar.gz \
     && cd nasm-${NASM_VERSION} \
@@ -97,7 +97,7 @@ RUN set -ex \
 # x265
 RUN set -ex \
     && cd /build-deps \
-    && X265_VERSION="3.3" \
+    && X265_VERSION="3.5" \
     && wget https://bitbucket.org/multicoreware/x265_git/downloads/x265_${X265_VERSION}.tar.gz \
     && tar xvf x265_${X265_VERSION}.tar.gz \
     && cd x265_${X265_VERSION} \
@@ -120,20 +120,6 @@ RUN set -ex \
     && make install-strip \
     && ldconfig
 
-# libaom
-RUN set -ex \
-    && cd /build-deps \
-    && LIBOAM_VERSION="2.0.1" \
-    && git clone --depth 1 --branch v${LIBOAM_VERSION} https://aomedia.googlesource.com/aom \
-    && mkdir -p ./aom_build \
-    && cd aom_build \
-    && cmake -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX=/usr ../aom \
-    && make -j4 \
-    && make install \
-    && strip -s /usr/lib64/libaom.so \
-    && cp /usr/lib64/pkgconfig/aom.pc /usr/lib/pkgconfig/aom.pc \
-    && ldconfig
-
 # Rust
 RUN set -ex \
     && curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -143,7 +129,7 @@ RUN set -ex && source $HOME/.cargo/env \
     && cargo install --force cbindgen
 
 # libheif: step1 - rav1e
-ENV LIBHEIF_VERSION 1.10.0
+ENV LIBHEIF_VERSION 1.12.0
 RUN set -ex \
     && cd /build-deps \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
@@ -153,20 +139,22 @@ RUN set -ex \
     && mkdir -p third-party \
     && cd third-party \
     && wget https://raw.githubusercontent.com/strukturag/libheif/master/third-party/rav1e.cmd \
-    && /bin/bash rav1e.cmd
+    && /bin/bash rav1e.cmd \
+    && cp rav1e/dist/lib/pkgconfig/* ${PKG_CONFIG_PATH}
 
 # libheif: step2 - dav1d
 RUN yum install meson -y
 RUN set -ex \
     && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party \
     && wget https://raw.githubusercontent.com/strukturag/libheif/master/third-party/dav1d.cmd \
-    && /bin/bash dav1d.cmd
+    && /bin/bash dav1d.cmd \
+    && cp dav1d/dist/lib64/pkgconfig/* ${PKG_CONFIG_PATH}
 
 # libheif: step3 - libheif
 RUN set -ex \
     && cd /build-deps/libheif-${LIBHEIF_VERSION} \
     && ./autogen.sh \
-    && ./configure --prefix /usr --enable-local-rav1e --enable-local-dav1d \
+    && ./configure --prefix /usr \
     && make -j4 \
     && make install-strip \
     && ldconfig

@@ -22,7 +22,7 @@ rm -rf ${WORKDIR}/*
 cp -rf /src "${WORKDIR}/cykooz.heif"
 
 source "$HOME/.cargo/env"
-PYTHONS=("36" "37" "38" "39")
+PYTHONS=("37" "38" "39" "310")
 for PY in "${PYTHONS[@]}"; do
   PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}m/bin/"
   if [ ! -d "${PY_BIN_DIR}" ]; then
@@ -33,7 +33,7 @@ for PY in "${PYTHONS[@]}"; do
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" ./pip wheel "${WORKDIR}/cykooz.heif" \
     -w "${RESULTDIR}/wheelhouse${PY}/"
   ./auditwheel repair ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.whl \
-    --plat manylinux2014_x86_64 \
+    --plat manylinux_2_24_x86_64 \
     -w "${RESULTDIR}/repaired${PY}"
   find /cargo_target/release/build/ -maxdepth 1 -name "pyo3*" -type d -print0 | xargs -0 rm -r
   TWINE_REPOSITORY=${TWINE_REPOSITORY} ./twine upload ${RESULTDIR}/repaired${PY}/cykooz.heif*manylinux2014*.whl

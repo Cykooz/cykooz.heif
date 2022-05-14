@@ -9,7 +9,7 @@ G_ID=$(id -g)
 OWNER="${U_ID}:${G_ID}"
 
 cd ./docker
-docker build -t cykooz_heif_build .
+DOCKER_BUILDKIT=1 docker build -t cykooz_heif_build .
 
 cd "${CUR_DIR}"
 docker run -it --rm \

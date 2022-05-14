@@ -6,6 +6,7 @@
       can use the word "HOTFIX" instead of it.
     - At the end of sentence MUST stand a point.
     - List of changes in the one version MUST be grouped in the next sections:
+        - Breaking Changes
         - Features
         - Changes
         - Bug Fixes
@@ -13,6 +14,22 @@
 
 CHANGELOG
 *********
+
+0.12 (2022-02-09)
+===================
+
+Breaking Changes
+----------------
+
+- Dropped support of Python 3.6.
+- Version of ``manylinux`` wheels updated to 2.24.
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.15.
+- Updated version of ``pyo3`` to 0.16.4.
+- Added building of wheel for Python 3.10.
 
 0.11 (2021-05-12)
 =================

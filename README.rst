@@ -6,6 +6,8 @@ cykooz.heif
 
 ``RawHeifImage`` is a simple wrapper around low level HEIF-decoder.
 
+`CHANGELOG <https://github.com/Cykooz/cykooz.heif/blob/main/CHANGES.rst>`_
+
 Usage Examples
 ==============
 
@@ -54,19 +56,18 @@ Installation from source
 
 System requirements:
 
-- libheif-dev >= 1.10 (https://github.com/strukturag/libheif)
+- libheif-dev >= 1.12 (https://github.com/strukturag/libheif)
 - python3-dev
-- Rust 1.39+ (https://www.rust-lang.org/)
+- Rust 1.56+ (https://www.rust-lang.org/)
 
-Ubuntu 18.04
+Ubuntu 22.04
 ------------
 
 .. code-block:: console
 
     $ sudo add-apt-repository ppa:strukturag/libheif
     $ sudo add-apt-repository ppa:strukturag/libde265
-    $ sudo apt-get install build-essential python3.7-dev libheif-dev curl
+    $ sudo apt-get install build-essential python3-dev libheif-dev curl
     $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     $ source $HOME/.cargo/env
-    $ pip3 install -U setuptools setuptools-rust
-    $ PYTHON_SYS_EXECUTABLE=python3 pip3 install cykooz.heif
+    $ pip3 install .

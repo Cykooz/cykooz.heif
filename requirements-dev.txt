@@ -1,8 +1,0 @@
-setuptools
-setuptools-rust
-wheel
-Pillow
-pytest
-piexif
-twine
-check-manifest

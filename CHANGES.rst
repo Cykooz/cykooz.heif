@@ -28,7 +28,7 @@ Changes
 -------
 
 - Updated version of ``libheif-rs`` to 0.15.
-- Updated version of ``pyo3`` to 0.16.4.
+- Updated version of ``pyo3`` to 0.16.5.
 - Added building of wheel for Python 3.10.
 
 0.11 (2021-05-12)

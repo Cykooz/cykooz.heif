@@ -70,7 +70,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN set -ex \
     && cd /build-deps \
-    && curl https://sh.rustup.rs -sSf | bash -s -- -y
+    && curl  https://sh.rustup.rs -sSf | bash -s -- -y
 
 RUN set -ex && source $HOME/.cargo/env \
     && cargo search --quiet --limit 1 a > /dev/null \
@@ -120,7 +120,7 @@ RUN set -ex \
     && declare -a pythons=("cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310") \
     && for PY in "${pythons[@]}"; do \
         cd "/opt/python/${PY}/bin/" \
-        && ./pip install --upgrade pip auditwheel twine setuptools setuptools-rust \
+        && ./pip install --upgrade pip auditwheel twine setuptools maturin \
         ; \
     done
 

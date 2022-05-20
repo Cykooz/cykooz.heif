@@ -29,6 +29,7 @@ rm -rf docker tests bootstrap.py build_wheels.sh
 
 source "$HOME/.cargo/env"
 PYTHONS=("7" "8" "9" "10")
+mkdir "${RESULT}/repaired"
 for PY_MINOR in "${PYTHONS[@]}"; do
   PY="3${PY_MINOR}"
   echo ""
@@ -38,17 +39,22 @@ for PY_MINOR in "${PYTHONS[@]}"; do
     PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}/bin/"
   fi;
   cd "${WORKDIR}/cykooz.heif"
+  mkdir "${RESULT}/wheelhouse${PY}"
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" "${PY_BIN_DIR}/maturin" build \
     --release --strip \
     --no-sdist \
     --compatibility manylinux_2_24 \
+    --skip-auditwheel \
     -i "python3.${PY_MINOR}" \
-    -o "${RESULTDIR}/"
+    -o "${RESULTDIR}/wheelhouse${PY}/"
+  "${PY_BIN_DIR}/auditwheel" repair ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.whl \
+    --plat manylinux_2_24_x86_64 \
+    -w "${RESULTDIR}/repaired"
   find /cargo_target/release/build/ -maxdepth 1 -name "pyo3*" -type d -print0 | xargs -0 rm -r
 done
 
 cd "${WORKDIR}/cykooz.heif"
 find . -name "*.so" -delete
-"${PY_BIN_DIR}/maturin" sdist -o "${RESULTDIR}/"
+"${PY_BIN_DIR}/maturin" sdist -o "${RESULTDIR}/repaired/"
 cd "${PY_BIN_DIR}"
-TWINE_REPOSITORY=${TWINE_REPOSITORY} ./twine upload ${RESULTDIR}/*
+TWINE_REPOSITORY=${TWINE_REPOSITORY} ./twine upload ${RESULTDIR}/repaired/*

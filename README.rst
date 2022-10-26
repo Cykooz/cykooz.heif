@@ -6,7 +6,7 @@ cykooz.heif
 
 ``RawHeifImage`` is a simple wrapper around low level HEIF-decoder.
 
-`CHANGELOG <https://github.com/Cykooz/cykooz.heif/blob/main/CHANGES.rst>`_
+`CHANGELOG <https://github.com/Cykooz/cykooz.heif/blob/master/CHANGES.rst>`_
 
 Usage Examples
 ==============

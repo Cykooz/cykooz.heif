@@ -28,7 +28,7 @@ rm -rf docker tests bootstrap.py build_wheels.sh
 
 
 source "$HOME/.cargo/env"
-PYTHONS=("7" "8" "9" "10")
+PYTHONS=("7" "8" "9" "10" "11")
 mkdir "${RESULT}/repaired"
 for PY_MINOR in "${PYTHONS[@]}"; do
   PY="3${PY_MINOR}"
@@ -42,7 +42,6 @@ for PY_MINOR in "${PYTHONS[@]}"; do
   mkdir "${RESULT}/wheelhouse${PY}"
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" "${PY_BIN_DIR}/maturin" build \
     --release --strip \
-    --no-sdist \
     --compatibility manylinux_2_24 \
     --skip-auditwheel \
     -i "python3.${PY_MINOR}" \

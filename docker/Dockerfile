@@ -117,7 +117,7 @@ RUN mkdir /workdir "${CARGO_TARGET_DIR}"
 
 RUN set -ex \
     && source $HOME/.cargo/env \
-    && declare -a pythons=("cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310") \
+    && declare -a pythons=("cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311") \
     && for PY in "${pythons[@]}"; do \
         cd "/opt/python/${PY}/bin/" \
         && ./pip install --upgrade pip auditwheel twine setuptools maturin \

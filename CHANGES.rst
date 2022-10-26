@@ -15,8 +15,19 @@
 CHANGELOG
 *********
 
+0.13 (2022-10-26)
+=================
+
+Changes
+-------
+
+- Fixed metadata of package.
+- Added building of wheel for Python 3.11.
+- Updated version of ``libheif-rs`` to 0.15.1.
+- Updated version of ``pyo3`` to 0.17.2.
+
 0.12 (2022-05-20)
-===================
+=================
 
 Breaking Changes
 ----------------

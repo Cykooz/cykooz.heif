@@ -5,7 +5,7 @@ build-backend = "maturin"
 
 [project]
 name = "cykooz.heif"
-version = "0.12"
+version = "0.13"
 description = "A decoder of HEIF format of images"
 readme = "README.rst"
 classifiers = [
@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
     "Topic :: Multimedia :: Graphics",
@@ -24,9 +25,6 @@ classifiers = [
 ]
 keywords = ["heif", "heic", "libheif", "pil", "pillow"]
 requires-python = ">=3.7"
-url = "https://github.com/Cykooz/cykooz.heif"
-author = "Kirill Kuzminykh"
-author_email = "cykooz@gmail.com"
 
 
 [project.optional-dependencies]

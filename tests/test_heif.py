@@ -99,3 +99,20 @@ def test_open_png_as_heif(data_path):
 
     pixel = img.getpixel((100, 100))
     assert pixel == (132, 185, 255)
+
+
+def test_zero_sized_exif_block(data_path):
+    img_path = data_path / 'zero_sized_exif.heic'
+    with img_path.open('rb') as f:
+        img = RawHeifImage.from_stream(f)
+        assert img.exif is None
+        assert img.width == 3024
+        assert img.height == 4032
+        assert img.mode == 'RGB'
+        assert len(img.data) == 36578304
+        assert img.stride == 9072
+
+    pil_img: Image.Image = Image.open(img_path)
+    assert 'exif' not in pil_img.info
+    assert pil_img.size == (3024, 4032)
+    assert pil_img.mode == 'RGB'

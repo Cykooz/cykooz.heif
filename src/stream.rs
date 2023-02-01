@@ -12,7 +12,7 @@ impl io::Read for StreamFromPy {
         Python::with_gil(|py| {
             match self.py_stream.call_method1(py, "read", (buf.len(), )) {
                 Ok(v) => {
-                    let py_bytes: &PyBytes = v.cast_as(py).map_err(|_| {
+                    let py_bytes: &PyBytes = v.downcast(py).map_err(|_| {
                         io::Error::new(
                             io::ErrorKind::Other,
                             "Error during casting PyObject into PyBytes \

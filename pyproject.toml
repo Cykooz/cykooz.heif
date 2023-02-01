@@ -5,7 +5,7 @@ build-backend = "maturin"
 
 [project]
 name = "cykooz.heif"
-version = "0.13"
+version = "0.13.1"
 description = "A decoder of HEIF format of images"
 readme = "README.rst"
 classifiers = [

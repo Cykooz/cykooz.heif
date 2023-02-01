@@ -82,6 +82,10 @@ impl HeifImage {
         if count == 0 {
             Ok(py.None())
         } else {
+            if handle.metadata_size(meta_ids[0]) == 0 {
+                // Invalid Exif block. It may have been incorrectly removed from the file.
+                return Ok(py.None());
+            }
             let exif = result2pyresult(handle.metadata(meta_ids[0]))?;
             Ok(PyBytes::new(py, &exif[4..]).into())
         }
@@ -161,7 +165,7 @@ fn py_image_from_context(context: HeifContext) -> libheif_rs::Result<HeifImage> 
 /// :rtype: str
 #[pyfunction]
 fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
-    let py_bytes = data.cast_as::<PyBytes>(py)?;
+    let py_bytes = data.downcast::<PyBytes>(py)?;
     let bytes = py_bytes.as_bytes();
     let res = libheif_rs::check_file_type(bytes);
     Ok(match res {

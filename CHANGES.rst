@@ -15,6 +15,19 @@
 CHANGELOG
 *********
 
+0.13.1 (2023-02-01)
+===================
+
+Changes
+-------
+
+- Updated version of ``pyo3`` to 0.18.
+
+Bug Fixes
+---------
+
+- Fixed error with receiving zero sized EXIF block.
+
 0.13 (2022-10-26)
 =================
 

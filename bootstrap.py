@@ -14,9 +14,9 @@ from tempfile import TemporaryDirectory
 from urllib.request import urlopen
 
 
-PIP_VERSION = '22.1'
-SETUPTOOLS_VERSION = '62.2.0'
-WHEEL_VERSION = '0.37.1'
+PIP_VERSION = '23'
+SETUPTOOLS_VERSION = '67'
+WHEEL_VERSION = '0.38.4'
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
 

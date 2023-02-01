@@ -73,6 +73,10 @@ RUN set -ex \
     && curl  https://sh.rustup.rs -sSf | bash -s -- -y
 
 RUN set -ex && source $HOME/.cargo/env \
+    && rustup install 1.66.1 \
+    && rustup default 1.66.1
+
+RUN set -ex && source $HOME/.cargo/env \
     && cargo search --quiet --limit 1 a > /dev/null \
     && cargo install --force cbindgen
 
@@ -83,12 +87,17 @@ RUN set -ex \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
     && tar xvf libheif-${LIBHEIF_VERSION}.tar.gz \
     && cd libheif-${LIBHEIF_VERSION} \
-    && source $HOME/.cargo/env \
     && mkdir -p third-party \
     && cd third-party \
-    && wget https://raw.githubusercontent.com/strukturag/libheif/v${LIBHEIF_VERSION}/third-party/rav1e.cmd \
-    && /bin/bash rav1e.cmd \
-    && cp rav1e/dist/lib/pkgconfig/* ${PKG_CONFIG_PATH}
+    && git clone -b 0.4 --depth 1 https://github.com/xiph/rav1e.git
+
+RUN set -ex \
+    && source $HOME/.cargo/env \
+    && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party \
+    && cd rav1e \
+    && cargo install --version 0.9.13+cargo-0.65 cargo-c \
+    && cargo cinstall --crt-static --release --prefix="$(pwd)/dist" --library-type=staticlib \
+    && cp ./dist/lib/pkgconfig/* ${PKG_CONFIG_PATH}
 
 # libheif: step2 - dav1d
 RUN set -ex \

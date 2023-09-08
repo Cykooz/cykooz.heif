@@ -1,0 +1,9 @@
+.*
+*.egg-info/
+build/
+dist/
+target/
+tests/
+docker/Dockerfile
+rust_lib.*
+wheels/

@@ -31,3 +31,4 @@ RELEASE-VERSION
 
 .*
 !/.gitignore
+!/.dockerignore

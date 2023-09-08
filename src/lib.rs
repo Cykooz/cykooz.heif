@@ -2,7 +2,8 @@ use std::io::BufReader;
 use std::sync::{Arc, Mutex};
 
 use libheif_rs::{
-    ColorSpace, FileTypeResult, HeifContext, ItemId, Reader, RgbChroma, StreamReader,
+    ColorSpace, DecodingOptions, FileTypeResult, HeifContext, ItemId, LibHeif, Reader, RgbChroma,
+    StreamReader,
 };
 use pyo3::exceptions;
 use pyo3::prelude::*;
@@ -19,7 +20,7 @@ fn result2pyresult<T>(res: libheif_rs::Result<T>) -> PyResult<T> {
 
 #[pyclass]
 struct HeifImage {
-    heif_context: Arc<Mutex<HeifContext>>,
+    heif_context: Arc<Mutex<HeifContext<'static>>>,
     /// Image mode.
     #[pyo3(get)]
     mode: String,
@@ -40,6 +41,7 @@ impl HeifImage {
     ///
     /// :rtype: Optional[Tuple[bytes, int, int]]
     fn get_data(&self, py: Python, ignore_transformations: bool) -> PyResult<PyObject> {
+        let lib_hef = LibHeif::new();
         let context_mutex = self.heif_context.clone();
         let image = py.allow_threads(move || {
             let context = context_mutex.lock().unwrap();
@@ -49,7 +51,11 @@ impl HeifImage {
             } else {
                 RgbChroma::Rgb
             };
-            handle.decode(ColorSpace::Rgb(chroma), ignore_transformations)
+            let decoding_options = DecodingOptions::new().map(|mut options| {
+                options.set_ignore_transformations(ignore_transformations);
+                options
+            });
+            lib_hef.decode(&handle, ColorSpace::Rgb(chroma), decoding_options)
         });
 
         let image = result2pyresult(image)?;
@@ -62,7 +68,7 @@ impl HeifImage {
             Some(plane) => {
                 data = PyBytes::new(py, plane.data).into();
                 stride = plane.stride.to_object(py);
-                bits_pre_pixel = plane.bits_pre_pixel.to_object(py);
+                bits_pre_pixel = plane.bits_per_pixel.to_object(py);
             }
             None => {
                 data = py.None();
@@ -78,7 +84,7 @@ impl HeifImage {
         let context = self.heif_context.lock().unwrap();
         let handle = result2pyresult(context.primary_image_handle())?;
         let mut meta_ids: [ItemId; 1] = [0];
-        let count = handle.metadata_block_ids("Exif", &mut meta_ids);
+        let count = handle.metadata_block_ids(&mut meta_ids, b"Exif");
         if count == 0 {
             Ok(py.None())
         } else {
@@ -135,7 +141,7 @@ fn open_heif_context_from_reader_impl(reader: Box<dyn Reader>) -> libheif_rs::Re
     py_image_from_context(context)
 }
 
-fn py_image_from_context(context: HeifContext) -> libheif_rs::Result<HeifImage> {
+fn py_image_from_context(context: HeifContext<'static>) -> libheif_rs::Result<HeifImage> {
     let handle = context.primary_image_handle()?;
     let width = handle.width();
     let height = handle.height();

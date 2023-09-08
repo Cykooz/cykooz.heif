@@ -9,8 +9,8 @@ pub(crate) struct StreamFromPy {
 
 impl io::Read for StreamFromPy {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        Python::with_gil(|py| {
-            match self.py_stream.call_method1(py, "read", (buf.len(), )) {
+        Python::with_gil(
+            |py| match self.py_stream.call_method1(py, "read", (buf.len(),)) {
                 Ok(v) => {
                     let py_bytes: &PyBytes = v.downcast(py).map_err(|_| {
                         io::Error::new(
@@ -34,8 +34,8 @@ impl io::Read for StreamFromPy {
                         .unwrap();
                     Err(io::Error::new(io::ErrorKind::Other, err_str))
                 }
-            }
-        })
+            },
+        )
     }
 }
 
@@ -47,8 +47,8 @@ impl io::Seek for StreamFromPy {
             io::SeekFrom::End(offset) => (2, offset),
         };
 
-        Python::with_gil(|py| {
-            match self.py_stream.call_method1(py, "seek", (offset, whence)) {
+        Python::with_gil(
+            |py| match self.py_stream.call_method1(py, "seek", (offset, whence)) {
                 Ok(v) => {
                     let pos: u64 = v.extract(py).map_err(|_| {
                         io::Error::new(io::ErrorKind::Other, "Method 'seek' returns not u64")
@@ -64,8 +64,8 @@ impl io::Seek for StreamFromPy {
                         .unwrap();
                     Err(io::Error::new(io::ErrorKind::Other, err_str))
                 }
-            }
-        })
+            },
+        )
     }
 }
 

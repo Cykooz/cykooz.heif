@@ -1,5 +1,6 @@
 rust/target
 **/*.rs.bk
+Cargo.lock
 
 __pycache__/
 *.py[cod]

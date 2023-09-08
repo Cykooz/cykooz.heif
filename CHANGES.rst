@@ -15,6 +15,21 @@
 CHANGELOG
 *********
 
+0.14 (2023-09-09)
+=================
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 0.21.0.
+- Updated version of ``pyo3`` to 0.19.2.
+
+Breaking Changes
+----------------
+
+- Dropped support of Python 3.7.
+- Version of ``manylinux`` wheels updated to 2.28.
+
 0.13.1 (2023-02-01)
 ===================
 

@@ -19,17 +19,18 @@ trap exit_handler EXIT
 mkdir -p "${RESULTDIR}"
 rm -rf ${RESULTDIR}/*
 rm -rf ${WORKDIR}/*
-cp -rf /src "${WORKDIR}/cykooz.heif"
-cd "${WORKDIR}/cykooz.heif"
+cp -rf /src "${WORKDIR}/cykooz-heif"
+cd "${WORKDIR}/cykooz-heif"
 find . -name ".*" -not -path '.' -not -path '..' -exec rm -rf {} +
 find . -name "*.pyc" -delete
 find . -name "__pycache__" -exec rm -rf {} +
-rm -rf docker tests bootstrap.py build_wheels.sh
+rm -rf docker tests build_wheels.sh
 
 
 source "$HOME/.cargo/env"
-PYTHONS=("7" "8" "9" "10" "11")
+PYTHONS=("8" "9" "10" "11")
 mkdir "${RESULT}/repaired"
+SDIST_OPT="--sdist"
 for PY_MINOR in "${PYTHONS[@]}"; do
   PY="3${PY_MINOR}"
   echo ""
@@ -38,22 +39,24 @@ for PY_MINOR in "${PYTHONS[@]}"; do
   if [ ! -d "${PY_BIN_DIR}" ]; then
     PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}/bin/"
   fi;
-  cd "${WORKDIR}/cykooz.heif"
+  cd "${WORKDIR}/cykooz-heif"
   mkdir "${RESULT}/wheelhouse${PY}"
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" "${PY_BIN_DIR}/maturin" build \
+    ${SDIST_OPT} \
     --release --strip \
-    --compatibility manylinux_2_24 \
+    --compatibility manylinux_2_28 \
     --skip-auditwheel \
     -i "python3.${PY_MINOR}" \
     -o "${RESULTDIR}/wheelhouse${PY}/"
   "${PY_BIN_DIR}/auditwheel" repair ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.whl \
-    --plat manylinux_2_24_x86_64 \
+    --plat manylinux_2_28_x86_64 \
     -w "${RESULTDIR}/repaired"
+  if [[ -n "$SDIST_OPT" ]]; then
+    cp ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.tar.gz "${RESULTDIR}/repaired/"
+    SDIST_OPT=""
+  fi
   find /cargo_target/release/build/ -maxdepth 1 -name "pyo3*" -type d -print0 | xargs -0 rm -r
 done
 
-cd "${WORKDIR}/cykooz.heif"
-find . -name "*.so" -delete
-"${PY_BIN_DIR}/maturin" sdist -o "${RESULTDIR}/repaired/"
 cd "${PY_BIN_DIR}"
 TWINE_REPOSITORY=${TWINE_REPOSITORY} ./twine upload ${RESULTDIR}/repaired/*

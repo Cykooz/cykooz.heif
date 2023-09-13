@@ -56,9 +56,10 @@ Installation from source
 
 System requirements:
 
-- libheif-dev >= 1.12 (https://github.com/strukturag/libheif)
+- libheif-dev >= 1.16 (https://github.com/strukturag/libheif)
 - python3-dev
-- Rust 1.56+ (https://www.rust-lang.org/)
+- Rust 1.72+ (https://www.rust-lang.org/)
+- CLang
 
 Ubuntu 22.04
 ------------
@@ -67,7 +68,7 @@ Ubuntu 22.04
 
     $ sudo add-apt-repository ppa:strukturag/libheif
     $ sudo add-apt-repository ppa:strukturag/libde265
-    $ sudo apt-get install build-essential python3-dev libheif-dev curl
+    $ sudo apt-get install build-essential python3-dev libheif-dev curl clang
     $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     $ source $HOME/.cargo/env
     $ pip3 install .

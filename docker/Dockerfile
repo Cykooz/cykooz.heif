@@ -8,15 +8,15 @@ FROM quay.io/pypa/manylinux_2_28_x86_64
 # setup
 RUN set -ex \
     && dnf install -y wget openssl-devel libjpeg-turbo-devel libpng-devel \
-    meson nasm
+    meson nasm clang \
+    && mkdir /build-deps
+
+SHELL ["/bin/bash", "-c"]
+
 
 ################
 # Dependencies #
 ################
-
-# setup
-RUN set -ex \
-    && mkdir /build-deps
 
 # x265
 RUN set -ex \
@@ -24,8 +24,8 @@ RUN set -ex \
     && X265_VERSION="3.5" \
     && wget https://bitbucket.org/multicoreware/x265_git/downloads/x265_${X265_VERSION}.tar.gz \
     && tar xvf x265_${X265_VERSION}.tar.gz \
-    && cd x265_${X265_VERSION} \
-    && cmake --install-prefix /usr -G "Unix Makefiles" ./source \
+    && cd x265_${X265_VERSION}/build/linux \
+    && cmake -G "Unix Makefiles" ../../source \
     && make -j4 \
     && make install/strip \
     && ldconfig
@@ -39,23 +39,26 @@ RUN set -ex \
     && cd libde265-${LIBDE265_VERSION} \
     && mkdir build \
     && cd build \
-    && cmake .. \
+    && cmake -DCMAKE_INSTALL_LIBDIR=lib .. \
     && make -j4 \
     && make install/strip \
     && ldconfig
 
-# Rust
-SHELL ["/bin/bash", "-c"]
 
+# Rust
 RUN set -ex \
     && cd /build-deps \
     && curl https://sh.rustup.rs -sSf | bash -s -- -y
-
 RUN set -ex && source $HOME/.cargo/env \
     && cargo search --quiet --limit 1 a > /dev/null \
     && cargo install --force cbindgen
 
-# libheif: step1 - rav1e
+# setup
+ENV CARGO_TARGET_DIR /cargo_target
+RUN mkdir /workdir "${CARGO_TARGET_DIR}"
+
+
+# libheif: step1 - get sources
 ENV LIBHEIF_VERSION 1.16.2
 RUN set -ex \
     && cd /build-deps \
@@ -68,6 +71,7 @@ RUN set -ex \
     && git clone -b 1.2.1 --depth 1 https://code.videolan.org/videolan/dav1d.git \
     && git clone -b v1.3.1 --depth 1 https://chromium.googlesource.com/webm/libwebp
 
+# libheif: step2 - rav1e
 RUN set -ex \
     && source $HOME/.cargo/env \
     && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party/rav1e \
@@ -75,7 +79,7 @@ RUN set -ex \
     && cargo cinstall --crt-static --release --prefix="$(pwd)/dist" --library-type=staticlib \
     && cp ./dist/lib/pkgconfig/* ${PKG_CONFIG_PATH}
 
-# libheif: step2 - dav1d
+# libheif: step3 - dav1d
 RUN set -ex \
     && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party/dav1d \
     && meson build --default-library=static --buildtype release --prefix "$(pwd)/dist" $@ \
@@ -83,7 +87,7 @@ RUN set -ex \
     && ninja -C build install \
     && cp dist/lib64/pkgconfig/* ${PKG_CONFIG_PATH}
 
-# libheif: step3 - libsharpyuv
+# libheif: step4 - libsharpyuv
 RUN set -ex \
     && cd /build-deps/libheif-${LIBHEIF_VERSION}/third-party/libwebp \
     && mkdir build \
@@ -93,23 +97,20 @@ RUN set -ex \
     && ninja install \
     && cp dist/lib64/pkgconfig/* ${PKG_CONFIG_PATH}
 
-# libheif: step4 - libheif
+# libheif: step5 - libheif
 RUN set -ex \
     && cd /build-deps/libheif-${LIBHEIF_VERSION} \
     && mkdir build \
     && cd build \
-    && cmake --preset=release --install-prefix /usr .. \
+    && cmake --preset=release -DENABLE_PLUGIN_LOADING=OFF --install-prefix /usr .. \
     && make -j4 \
     && make install/strip \
     && ldconfig
 
-##########################
-# Build manylinux wheels #
-##########################
 
-# setup
-ENV CARGO_TARGET_DIR /cargo_target
-RUN mkdir /workdir "${CARGO_TARGET_DIR}"
+####################
+# Prepare python env
+####################
 
 RUN set -ex \
     && source $HOME/.cargo/env \

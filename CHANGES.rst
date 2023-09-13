@@ -21,7 +21,7 @@ CHANGELOG
 Changes
 -------
 
-- Updated version of ``libheif-rs`` to 0.21.0.
+- Updated version of ``libheif-rs`` to 0.22.0.
 - Updated version of ``pyo3`` to 0.19.2.
 
 Breaking Changes

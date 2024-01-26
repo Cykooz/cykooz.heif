@@ -59,7 +59,7 @@ RUN mkdir /workdir "${CARGO_TARGET_DIR}"
 
 
 # libheif: step1 - get sources
-ENV LIBHEIF_VERSION 1.16.2
+ENV LIBHEIF_VERSION 1.17.6
 RUN set -ex \
     && cd /build-deps \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \
@@ -67,9 +67,9 @@ RUN set -ex \
     && cd libheif-${LIBHEIF_VERSION} \
     && mkdir -p third-party \
     && cd third-party \
-    && git clone -b 0.6 --depth 1 https://github.com/xiph/rav1e.git \
-    && git clone -b 1.2.1 --depth 1 https://code.videolan.org/videolan/dav1d.git \
-    && git clone -b v1.3.1 --depth 1 https://chromium.googlesource.com/webm/libwebp
+    && git clone -b v0.7.1 --depth 1 https://github.com/xiph/rav1e.git \
+    && git clone -b 1.3.0 --depth 1 https://code.videolan.org/videolan/dav1d.git \
+    && git clone -b v1.3.2 --depth 1 https://chromium.googlesource.com/webm/libwebp
 
 # libheif: step2 - rav1e
 RUN set -ex \
@@ -114,7 +114,7 @@ RUN set -ex \
 
 RUN set -ex \
     && source $HOME/.cargo/env \
-    && declare -a pythons=("cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311") \
+    && declare -a pythons=("cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311" "cp312-cp312") \
     && for PY in "${pythons[@]}"; do \
         cd "/opt/python/${PY}/bin/" \
         && ./pip install --upgrade pip auditwheel twine setuptools maturin \

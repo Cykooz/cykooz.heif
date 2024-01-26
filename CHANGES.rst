@@ -15,6 +15,20 @@
 CHANGELOG
 *********
 
+1.0.0 (2024-01-26)
+=================
+
+Features
+--------
+
+- Added support for Pillow >= 10.1
+
+Changes
+-------
+
+- Updated version of ``libheif-rs`` to 1.0.
+- Updated version of ``pyo3`` to 0.20.
+
 0.14 (2023-09-09)
 =================
 

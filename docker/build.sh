@@ -28,17 +28,14 @@ rm -rf docker tests build_wheels.sh
 
 
 source "$HOME/.cargo/env"
-PYTHONS=("8" "9" "10" "11")
+PYTHONS=("8" "9" "10" "11" "12")
 mkdir "${RESULT}/repaired"
 SDIST_OPT="--sdist"
 for PY_MINOR in "${PYTHONS[@]}"; do
   PY="3${PY_MINOR}"
   echo ""
   echo "Build wheel for Python 3.${PY_MINOR}"
-  PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}m/bin/"
-  if [ ! -d "${PY_BIN_DIR}" ]; then
-    PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}/bin/"
-  fi;
+  PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}/bin"
   cd "${WORKDIR}/cykooz-heif"
   mkdir "${RESULT}/wheelhouse${PY}"
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" "${PY_BIN_DIR}/maturin" build \

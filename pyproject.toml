@@ -5,17 +5,18 @@ build-backend = "maturin"
 
 [project]
 name = "cykooz.heif"
-version = "0.14.0"
+version = "1.0.0"
 description = "A decoder of HEIF format of images"
 readme = "README.rst"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
     "Topic :: Multimedia :: Graphics",

@@ -28,7 +28,11 @@ class HeifImageFile(ImageFile.ImageFile):
         self._size = raw_heif_image.width, raw_heif_image.height
 
         # mode setting
-        self.mode = raw_heif_image.mode
+        if hasattr(self, '_mode'):
+            self._mode = raw_heif_image.mode
+        else:
+            # Support Pillow < 10.1.0
+            self.mode = raw_heif_image.mode
 
         exif = raw_heif_image.exif
         if exif:

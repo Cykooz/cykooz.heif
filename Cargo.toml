@@ -12,8 +12,8 @@ crate-type = ["cdylib"]
 
 
 [dependencies]
-libheif-rs = { version = "1.0" }
-pyo3 = "0.20"
+libheif-rs = { version = "1.0.1" }
+pyo3 = "0.21"
 
 
 [profile.release]

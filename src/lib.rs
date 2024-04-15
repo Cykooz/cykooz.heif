@@ -66,7 +66,7 @@ impl HeifImage {
         let bits_pre_pixel: PyObject;
         match planes.interleaved {
             Some(plane) => {
-                data = PyBytes::new(py, plane.data).into();
+                data = PyBytes::new_bound(py, plane.data).into();
                 stride = plane.stride.to_object(py);
                 bits_pre_pixel = plane.bits_per_pixel.to_object(py);
             }
@@ -76,7 +76,7 @@ impl HeifImage {
                 bits_pre_pixel = py.None();
             }
         };
-        let res: PyObject = PyTuple::new(py, &[data, stride, bits_pre_pixel]).into();
+        let res: PyObject = PyTuple::new_bound(py, &[data, stride, bits_pre_pixel]).into();
         Ok(res)
     }
 
@@ -93,7 +93,7 @@ impl HeifImage {
                 return Ok(py.None());
             }
             let exif = result2pyresult(handle.metadata(meta_ids[0]))?;
-            Ok(PyBytes::new(py, &exif[4..]).into())
+            Ok(PyBytes::new_bound(py, &exif[4..]).into())
         }
     }
 }
@@ -171,7 +171,7 @@ fn py_image_from_context(context: HeifContext<'static>) -> libheif_rs::Result<He
 /// :rtype: str
 #[pyfunction]
 fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
-    let py_bytes = data.downcast::<PyBytes>(py)?;
+    let py_bytes = data.downcast_bound::<PyBytes>(py)?;
     let bytes = py_bytes.as_bytes();
     let res = libheif_rs::check_file_type(bytes);
     Ok(match res {
@@ -184,7 +184,7 @@ fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
 
 /// This module is a python module implemented in Rust.
 #[pymodule]
-fn rust_lib(_py: Python, m: &PyModule) -> PyResult<()> {
+fn rust_lib(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(open_heif_from_path))?;
     m.add_wrapped(wrap_pyfunction!(open_heif_from_reader))?;
     m.add_wrapped(wrap_pyfunction!(check_file_type))?;

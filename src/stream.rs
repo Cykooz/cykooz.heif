@@ -12,7 +12,7 @@ impl io::Read for StreamFromPy {
         Python::with_gil(
             |py| match self.py_stream.call_method1(py, "read", (buf.len(),)) {
                 Ok(v) => {
-                    let py_bytes: &PyBytes = v.downcast(py).map_err(|_| {
+                    let py_bytes: &Bound<PyBytes> = v.downcast_bound(py).map_err(|_| {
                         io::Error::new(
                             io::ErrorKind::Other,
                             "Error during casting PyObject into PyBytes \
@@ -79,10 +79,11 @@ mod tests {
 
     #[test]
     fn test_read() -> PyResult<()> {
+        pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let locals = [("io", py.import("io")?)].into_py_dict(py);
+            let locals = [("io", py.import_bound("io")?)].into_py_dict_bound(py);
             let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
-            let result = py.eval(code, None, Some(locals))?;
+            let result = py.eval_bound(code, None, Some(&locals))?;
             let mut stream_from_py = StreamFromPy {
                 py_stream: result.into_py(py),
             };
@@ -108,10 +109,11 @@ mod tests {
 
     #[test]
     fn test_seek() -> PyResult<()> {
+        pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let locals = [("io", py.import("io")?)].into_py_dict(py);
+            let locals = [("io", py.import_bound("io")?)].into_py_dict_bound(py);
             let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
-            let result = py.eval(code, None, Some(locals))?;
+            let result = py.eval_bound(code, None, Some(&locals))?;
             let mut stream_from_py = StreamFromPy {
                 py_stream: result.into_py(py),
             };
@@ -125,7 +127,7 @@ mod tests {
             let pos = stream_from_py.seek(io::SeekFrom::Start(100))?;
             assert_eq!(pos, 100);
 
-            let pos = stream_from_py.seek(io::SeekFrom::Current(0))?;
+            let pos = stream_from_py.stream_position()?;
             assert_eq!(pos, 100);
 
             let mut buf = vec![0u8; 100];
@@ -135,7 +137,7 @@ mod tests {
             expect.append(&mut vec![0u8; 50]);
             assert_eq!(buf, expect);
 
-            let pos = stream_from_py.seek(io::SeekFrom::Current(0))?;
+            let pos = stream_from_py.stream_position()?;
             assert_eq!(pos, 150);
 
             Ok(())

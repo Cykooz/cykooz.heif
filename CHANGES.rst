@@ -15,6 +15,19 @@
 CHANGELOG
 *********
 
+Next release
+============
+
+Changes
+-------
+
+- Updated version of ``pyo3`` to 0.21.
+
+Bug Fixes
+---------
+
+- Updated version of ``libheif-rs`` to 1.0.1.
+
 1.0.0 (2024-01-26)
 =================
 

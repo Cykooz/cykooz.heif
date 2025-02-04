@@ -27,10 +27,11 @@ impl io::Read for StreamFromPy {
                 }
                 Err(e) => {
                     let err_str: String = e
-                        .to_object(py)
-                        .call_method0(py, "__str__")
+                        .into_pyobject(py)
                         .unwrap()
-                        .extract(py)
+                        .call_method0("__str__")
+                        .unwrap()
+                        .extract()
                         .unwrap();
                     Err(io::Error::new(io::ErrorKind::Other, err_str))
                 }
@@ -57,10 +58,11 @@ impl io::Seek for StreamFromPy {
                 }
                 Err(e) => {
                     let err_str: String = e
-                        .to_object(py)
-                        .call_method0(py, "__str__")
+                        .into_pyobject(py)
                         .unwrap()
-                        .extract(py)
+                        .call_method0("__str__")
+                        .unwrap()
+                        .extract()
                         .unwrap();
                     Err(io::Error::new(io::ErrorKind::Other, err_str))
                 }
@@ -73,6 +75,7 @@ impl io::Seek for StreamFromPy {
 mod tests {
     use std::io::{Read, Seek};
 
+    use pyo3::ffi::c_str;
     use pyo3::types::IntoPyDict;
 
     use super::*;
@@ -81,11 +84,11 @@ mod tests {
     fn test_read() -> PyResult<()> {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let locals = [("io", py.import_bound("io")?)].into_py_dict_bound(py);
-            let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
-            let result = py.eval_bound(code, None, Some(&locals))?;
+            let locals = [("io", py.import("io")?)].into_py_dict(py)?;
+            let code = c_str!("io.BytesIO(b'a' * 100 + b'b' * 50)");
+            let result = py.eval(code, None, Some(&locals))?;
             let mut stream_from_py = StreamFromPy {
-                py_stream: result.into_py(py),
+                py_stream: result.into_pyobject(py)?.into(),
             };
             let mut buf = vec![0u8; 100];
 
@@ -111,11 +114,11 @@ mod tests {
     fn test_seek() -> PyResult<()> {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let locals = [("io", py.import_bound("io")?)].into_py_dict_bound(py);
-            let code = "io.BytesIO(b'a' * 100 + b'b' * 50)";
-            let result = py.eval_bound(code, None, Some(&locals))?;
+            let locals = [("io", py.import("io")?)].into_py_dict(py)?;
+            let code = c_str!("io.BytesIO(b'a' * 100 + b'b' * 50)");
+            let result = py.eval(code, None, Some(&locals))?;
             let mut stream_from_py = StreamFromPy {
-                py_stream: result.into_py(py),
+                py_stream: result.into_pyobject(py)?.into(),
             };
 
             let pos = stream_from_py.seek(io::SeekFrom::Start(0))?;

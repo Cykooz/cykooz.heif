@@ -5,10 +5,9 @@ use libheif_rs::{
     ColorSpace, DecodingOptions, FileTypeResult, HeifContext, ItemId, LibHeif, Reader, RgbChroma,
     StreamReader,
 };
-use pyo3::exceptions;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
-use pyo3::wrap_pyfunction;
+use pyo3::{exceptions, wrap_pyfunction};
 
 use crate::stream::StreamFromPy;
 
@@ -40,7 +39,11 @@ impl HeifImage {
     /// Returns tuple with image pixels data, stride and bits per pixel.
     ///
     /// :rtype: Optional[Tuple[bytes, int, int]]
-    fn get_data(&self, py: Python, ignore_transformations: bool) -> PyResult<PyObject> {
+    fn get_data<'py>(
+        &self,
+        py: Python<'py>,
+        ignore_transformations: bool,
+    ) -> PyResult<Bound<'py, PyTuple>> {
         let lib_hef = LibHeif::new();
         let context_mutex = self.heif_context.clone();
         let image = py.allow_threads(move || {
@@ -66,9 +69,9 @@ impl HeifImage {
         let bits_pre_pixel: PyObject;
         match planes.interleaved {
             Some(plane) => {
-                data = PyBytes::new_bound(py, plane.data).into();
-                stride = plane.stride.to_object(py);
-                bits_pre_pixel = plane.bits_per_pixel.to_object(py);
+                data = PyBytes::new(py, plane.data).into();
+                stride = plane.stride.into_pyobject(py)?.into();
+                bits_pre_pixel = plane.bits_per_pixel.into_pyobject(py)?.into();
             }
             None => {
                 data = py.None();
@@ -76,8 +79,7 @@ impl HeifImage {
                 bits_pre_pixel = py.None();
             }
         };
-        let res: PyObject = PyTuple::new_bound(py, &[data, stride, bits_pre_pixel]).into();
-        Ok(res)
+        PyTuple::new(py, &[data, stride, bits_pre_pixel])
     }
 
     fn get_exif(&self, py: Python) -> PyResult<PyObject> {
@@ -93,7 +95,7 @@ impl HeifImage {
                 return Ok(py.None());
             }
             let exif = result2pyresult(handle.metadata(meta_ids[0]))?;
-            Ok(PyBytes::new_bound(py, &exif[4..]).into())
+            Ok(PyBytes::new(py, &exif[4..]).into())
         }
     }
 }
@@ -101,7 +103,7 @@ impl HeifImage {
 /// open_heif_from_path(path: str) -> HeifImage
 /// --
 ///
-/// This function open HEIF file form given path and returns
+/// This function opens HEIF file form given path and returns
 /// instance of HeifImage.
 ///
 /// :type path: str
@@ -119,7 +121,7 @@ fn open_heif_from_path_impl(path: &str) -> libheif_rs::Result<HeifImage> {
 /// open_heif_from_reader(reader, total_size: int) -> HeifImage
 /// --
 ///
-/// This function open HEIF file form given reader instance and returns
+/// This function opens HEIF file form given reader instance and returns
 /// instance of HeifImage.
 ///
 /// :type reader: typing.BinaryIO
@@ -164,7 +166,7 @@ fn py_image_from_context(context: HeifContext<'static>) -> libheif_rs::Result<He
 /// check_file_type(data: bytes) -> str
 /// --
 ///
-/// Check file type by it first bytes.
+/// Check a file type by it first bytes.
 /// Input data should be at least 12 bytes.
 ///
 /// :type data: bytes

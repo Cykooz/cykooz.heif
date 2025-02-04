@@ -28,7 +28,7 @@ rm -rf docker tests build_wheels.sh
 
 
 source "$HOME/.cargo/env"
-PYTHONS=("8" "9" "10" "11" "12")
+PYTHONS=("9" "10" "11" "12" "13")
 mkdir "${RESULT}/repaired"
 SDIST_OPT="--sdist"
 for PY_MINOR in "${PYTHONS[@]}"; do

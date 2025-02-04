@@ -116,3 +116,14 @@ def test_zero_sized_exif_block(data_path):
     assert 'exif' not in pil_img.info
     assert pil_img.size == (3024, 4032)
     assert pil_img.mode == 'RGB'
+
+
+def test_open_heic_from_ios18(data_path):
+    img = RawHeifImage.from_path(data_path / 'ios18.heic')
+    assert img.width == 3024
+    assert img.height == 4032
+    assert img.mode == 'RGB'
+    assert len(img.data) == 36578304
+    assert img.stride == 9072
+    assert len(img.exif) == 2492
+

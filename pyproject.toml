@@ -1,22 +1,22 @@
 [build-system]
-requires = ["maturin>=1.2.3"]
+requires = ["maturin>=1.5.1"]
 build-backend = "maturin"
 
 
 [project]
 name = "cykooz.heif"
-version = "1.0.1"
+version = "1.1.0"
 description = "A decoder of HEIF format of images"
-readme = "README.rst"
+readme = "README.md"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
     "Topic :: Multimedia :: Graphics",
@@ -24,13 +24,14 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 keywords = ["heif", "heic", "libheif", "pil", "pillow"]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 
 [project.optional-dependencies]
 dev = [
     "wheel",
-    "maturin[zig,patchelf]",
+    "maturin[zig]",
+    "maturin[zig,patchelf]; platform_system == 'Linux'",
     "pytest",
     "Pillow",
     "piexif",

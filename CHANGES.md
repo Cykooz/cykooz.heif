@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.2.0 (2025-04-08)
+
+### Changes
+
+- Updated version of ``libheif-rs`` to 2.0.0 (improved support HEIC-files from iOS 18+)
+- Updated version of ``pyo3`` to 0.24.
+
 ## 1.1.0 (2025-02-04)
 
 ### Changes

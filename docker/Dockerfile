@@ -14,6 +14,11 @@ RUN set -ex \
 SHELL ["/bin/bash", "-c"]
 
 
+# Downgrade CMake version
+RUN set -ex \
+    && pipx uninstall cmake \
+    && pipx install cmake==3.31.6
+
 ################
 # Dependencies #
 ################
@@ -60,7 +65,7 @@ RUN mkdir /workdir "${CARGO_TARGET_DIR}"
 
 
 # libheif: step1 - get sources
-ENV LIBHEIF_VERSION 1.18.2
+ENV LIBHEIF_VERSION 1.19.7
 RUN set -ex \
     && cd /build-deps \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \

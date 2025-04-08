@@ -120,10 +120,10 @@ def test_zero_sized_exif_block(data_path):
 
 def test_open_heic_from_ios18(data_path):
     img = RawHeifImage.from_path(data_path / 'ios18.heic')
-    assert img.width == 3024
-    assert img.height == 4032
+    assert img.width == 4284
+    assert img.height == 5712
     assert img.mode == 'RGB'
-    assert len(img.data) == 36578304
-    assert img.stride == 9072
-    assert len(img.exif) == 2492
-
+    data_size = len(img.data)
+    assert data_size == 73479168
+    assert img.stride == 12864
+    assert len(img.exif) == 3002

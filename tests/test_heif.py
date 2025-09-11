@@ -3,6 +3,7 @@
 :Authors: cykooz
 :Date: 23.06.2019
 """
+
 from pathlib import Path
 
 import piexif

@@ -46,7 +46,7 @@ impl HeifImage {
     ) -> PyResult<Bound<'py, PyTuple>> {
         let lib_hef = LibHeif::new();
         let context_mutex = self.heif_context.clone();
-        let image = py.allow_threads(move || {
+        let image = py.detach(move || {
             let context = context_mutex.lock().unwrap();
             let handle = context.primary_image_handle()?;
             let chroma = if handle.has_alpha_channel() {
@@ -64,9 +64,9 @@ impl HeifImage {
         let image = result2pyresult(image)?;
         let planes = image.planes();
 
-        let data: PyObject;
-        let stride: PyObject;
-        let bits_pre_pixel: PyObject;
+        let data: Py<PyAny>;
+        let stride: Py<PyAny>;
+        let bits_pre_pixel: Py<PyAny>;
         match planes.interleaved {
             Some(plane) => {
                 data = PyBytes::new(py, plane.data).into();
@@ -82,7 +82,7 @@ impl HeifImage {
         PyTuple::new(py, &[data, stride, bits_pre_pixel])
     }
 
-    fn get_exif(&self, py: Python) -> PyResult<PyObject> {
+    fn get_exif(&self, py: Python) -> PyResult<Py<PyAny>> {
         let context = self.heif_context.lock().unwrap();
         let handle = result2pyresult(context.primary_image_handle())?;
         let mut meta_ids: [ItemId; 1] = [0];
@@ -110,7 +110,7 @@ impl HeifImage {
 /// :rtype: HeifImage
 #[pyfunction]
 fn open_heif_from_path(py: Python, path: &str) -> PyResult<HeifImage> {
-    result2pyresult(py.allow_threads(move || open_heif_from_path_impl(path)))
+    result2pyresult(py.detach(move || open_heif_from_path_impl(path)))
 }
 
 fn open_heif_from_path_impl(path: &str) -> libheif_rs::Result<HeifImage> {
@@ -121,19 +121,19 @@ fn open_heif_from_path_impl(path: &str) -> libheif_rs::Result<HeifImage> {
 /// open_heif_from_reader(reader, total_size: int) -> HeifImage
 /// --
 ///
-/// This function opens HEIF file form given reader instance and returns
-/// instance of HeifImage.
+/// This function opens a HEIF file from the given reader instance and returns
+/// an instance of HeifImage.
 ///
 /// :type reader: typing.BinaryIO
 /// :type total_size: int
 /// :rtype: HeifImage
 #[pyfunction]
-fn open_heif_from_reader(py: Python, reader: PyObject, total_size: u64) -> PyResult<HeifImage> {
+fn open_heif_from_reader(py: Python, reader: Py<PyAny>, total_size: u64) -> PyResult<HeifImage> {
     let stream_from_py = StreamFromPy {
         py_stream: reader.clone_ref(py),
     };
     let stream_from_py = BufReader::new(stream_from_py);
-    result2pyresult(py.allow_threads(move || {
+    result2pyresult(py.detach(move || {
         open_heif_context_from_reader_impl(Box::new(StreamReader::new(stream_from_py, total_size)))
     }))
 }
@@ -172,7 +172,7 @@ fn py_image_from_context(context: HeifContext<'static>) -> libheif_rs::Result<He
 /// :type data: bytes
 /// :rtype: str
 #[pyfunction]
-fn check_file_type(py: Python, data: PyObject) -> PyResult<String> {
+fn check_file_type(py: Python, data: Py<PyAny>) -> PyResult<String> {
     let py_bytes = data.downcast_bound::<PyBytes>(py)?;
     let bytes = py_bytes.as_bytes();
     let res = libheif_rs::check_file_type(bytes);

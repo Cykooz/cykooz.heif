@@ -4,18 +4,17 @@ use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
 pub(crate) struct StreamFromPy {
-    pub(crate) py_stream: PyObject,
+    pub(crate) py_stream: Py<PyAny>,
 }
 
 impl io::Read for StreamFromPy {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        Python::with_gil(
+        Python::attach(
             |py| match self.py_stream.call_method1(py, "read", (buf.len(),)) {
                 Ok(v) => {
                     let py_bytes: &Bound<PyBytes> = v.downcast_bound(py).map_err(|_| {
-                        io::Error::new(
-                            io::ErrorKind::Other,
-                            "Error during casting PyObject into PyBytes \
+                        io::Error::other(
+                            "Error during casting Py<PyAny> into PyBytes \
                          ('read' method returns not a bytes)",
                         )
                     })?;
@@ -33,7 +32,7 @@ impl io::Read for StreamFromPy {
                         .unwrap()
                         .extract()
                         .unwrap();
-                    Err(io::Error::new(io::ErrorKind::Other, err_str))
+                    Err(io::Error::other(err_str))
                 }
             },
         )
@@ -48,12 +47,12 @@ impl io::Seek for StreamFromPy {
             io::SeekFrom::End(offset) => (2, offset),
         };
 
-        Python::with_gil(
+        Python::attach(
             |py| match self.py_stream.call_method1(py, "seek", (offset, whence)) {
                 Ok(v) => {
-                    let pos: u64 = v.extract(py).map_err(|_| {
-                        io::Error::new(io::ErrorKind::Other, "Method 'seek' returns not u64")
-                    })?;
+                    let pos: u64 = v
+                        .extract(py)
+                        .map_err(|_| io::Error::other("Method 'seek' returns not u64"))?;
                     Ok(pos)
                 }
                 Err(e) => {
@@ -64,7 +63,7 @@ impl io::Seek for StreamFromPy {
                         .unwrap()
                         .extract()
                         .unwrap();
-                    Err(io::Error::new(io::ErrorKind::Other, err_str))
+                    Err(io::Error::other(err_str))
                 }
             },
         )
@@ -82,8 +81,8 @@ mod tests {
 
     #[test]
     fn test_read() -> PyResult<()> {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
+        Python::initialize();
+        Python::attach(|py| {
             let locals = [("io", py.import("io")?)].into_py_dict(py)?;
             let code = c_str!("io.BytesIO(b'a' * 100 + b'b' * 50)");
             let result = py.eval(code, None, Some(&locals))?;
@@ -112,8 +111,8 @@ mod tests {
 
     #[test]
     fn test_seek() -> PyResult<()> {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
+        Python::initialize();
+        Python::attach(|py| {
             let locals = [("io", py.import("io")?)].into_py_dict(py)?;
             let code = c_str!("io.BytesIO(b'a' * 100 + b'b' * 50)");
             let result = py.eval(code, None, Some(&locals))?;

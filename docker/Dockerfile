@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.18
 FROM quay.io/pypa/manylinux_2_28_x86_64
 
 ###############
@@ -38,7 +38,7 @@ RUN set -ex \
 # libde265
 RUN set -ex \
     && cd /build-deps \
-    && LIBDE265_VERSION="1.0.15" \
+    && LIBDE265_VERSION="1.0.16" \
     && wget https://github.com/strukturag/libde265/releases/download/v${LIBDE265_VERSION}/libde265-${LIBDE265_VERSION}.tar.gz \
     && tar xvf libde265-${LIBDE265_VERSION}.tar.gz \
     && cd libde265-${LIBDE265_VERSION} \
@@ -65,7 +65,7 @@ RUN mkdir /workdir "${CARGO_TARGET_DIR}"
 
 
 # libheif: step1 - get sources
-ENV LIBHEIF_VERSION 1.19.7
+ENV LIBHEIF_VERSION 1.20.2
 RUN set -ex \
     && cd /build-deps \
     && wget https://github.com/strukturag/libheif/releases/download/v${LIBHEIF_VERSION}/libheif-${LIBHEIF_VERSION}.tar.gz \

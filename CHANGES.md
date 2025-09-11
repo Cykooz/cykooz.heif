@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.3.0 (2025-09-11)
+
+### Changes
+
+- Updated version of ``libheif-rs`` to 2.4.0 (fixed error with reading from a file-like object)
+- Updated version of ``pyo3`` to 0.26.
+
 ## 1.2.0 (2025-04-08)
 
 ### Changes

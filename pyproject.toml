@@ -1,22 +1,22 @@
 [build-system]
-requires = ["maturin>=1.5.1"]
+requires = ["maturin>=1.14.1"]
 build-backend = "maturin"
 
 
 [project]
-name = "cykooz.heif"
-version = "1.3.0"
+name = "cykooz_heif"
+version = "3.0.0"
 description = "A decoder of HEIF format of images"
 readme = "README.md"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
     "Topic :: Multimedia :: Graphics",
@@ -24,7 +24,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 keywords = ["heif", "heic", "libheif", "pil", "pillow"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 
 [project.optional-dependencies]
@@ -41,12 +41,14 @@ dev = [
 [tool.maturin]
 python-source = "python"
 features = ["pyo3/extension-module"]
-module-name = "cykooz.heif.rust_lib"
+module-name = "cykooz_heif.rust_lib"
 strip = true
+auditwheel = "repair"
 
 
 [tool.pytest.ini_options]
 minversion = "6.0"
+markers = ["now"]
 testpaths = [
     "tests",
 ]

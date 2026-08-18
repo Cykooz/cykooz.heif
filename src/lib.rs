@@ -173,7 +173,7 @@ fn py_image_from_context(context: HeifContext<'static>) -> libheif_rs::Result<He
 /// :rtype: str
 #[pyfunction]
 fn check_file_type(py: Python, data: Py<PyAny>) -> PyResult<String> {
-    let py_bytes = data.downcast_bound::<PyBytes>(py)?;
+    let py_bytes = data.cast_bound::<PyBytes>(py)?;
     let bytes = py_bytes.as_bytes();
     let res = libheif_rs::check_file_type(bytes);
     Ok(match res {

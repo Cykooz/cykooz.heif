@@ -12,7 +12,7 @@ impl io::Read for StreamFromPy {
         Python::attach(
             |py| match self.py_stream.call_method1(py, "read", (buf.len(),)) {
                 Ok(v) => {
-                    let py_bytes: &Bound<PyBytes> = v.downcast_bound(py).map_err(|_| {
+                    let py_bytes: &Bound<PyBytes> = v.cast_bound(py).map_err(|_| {
                         io::Error::other(
                             "Error during casting Py<PyAny> into PyBytes \
                          ('read' method returns not a bytes)",

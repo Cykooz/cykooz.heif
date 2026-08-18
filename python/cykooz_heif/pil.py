@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 :Authors: cykooz
 :Date: 24.06.2019
@@ -49,10 +48,11 @@ class HeifDecoder(ImageFile.PyDecoder):
 
     def decode(self, buffer):
         raw_heif_image: RawHeifImage = self.args[0]
-        mode = raw_heif_image.mode
-        raw_decoder = Image._getdecoder(mode, 'raw', (mode, raw_heif_image.stride))
-        raw_decoder.setimage(self.im)
-        return raw_decoder.decode(raw_heif_image.data)
+        self.set_as_raw(
+            raw_heif_image.data,
+            (raw_heif_image.mode, raw_heif_image.stride),
+        )
+        return 0, 0
 
 
 def register_heif_opener():

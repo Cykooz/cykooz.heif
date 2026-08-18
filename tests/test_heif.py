@@ -10,9 +10,9 @@ import piexif
 import pytest
 from PIL import Image
 
-from cykooz.heif.errors import HeifError
-from cykooz.heif.image import RawHeifImage
-from cykooz.heif.pil import register_heif_opener
+from cykooz_heif.errors import HeifError
+from cykooz_heif.image import RawHeifImage
+from cykooz_heif.pil import register_heif_opener
 
 
 @pytest.fixture(scope='session', autouse=True)

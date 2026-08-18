@@ -28,8 +28,8 @@ rm -rf docker tests build_wheels.sh
 
 
 source "$HOME/.cargo/env"
-PYTHONS=("9" "10" "11" "12" "13")
-mkdir "${RESULT}/repaired"
+PYTHONS=("10" "11" "12" "13" "14")
+mkdir -p "${RESULTDIR}/repaired"
 SDIST_OPT="--sdist"
 for PY_MINOR in "${PYTHONS[@]}"; do
   PY="3${PY_MINOR}"
@@ -37,19 +37,19 @@ for PY_MINOR in "${PYTHONS[@]}"; do
   echo "Build wheel for Python 3.${PY_MINOR}"
   PY_BIN_DIR="/opt/python/cp${PY}-cp${PY}/bin"
   cd "${WORKDIR}/cykooz-heif"
-  mkdir "${RESULT}/wheelhouse${PY}"
+  mkdir -p "${RESULTDIR}/wheelhouse${PY}"
   PYTHON_SYS_EXECUTABLE="${PY_BIN_DIR}/python" "${PY_BIN_DIR}/maturin" build \
     ${SDIST_OPT} \
     --release --strip \
-    --compatibility manylinux_2_28 \
+    --compatibility manylinux_2_34 \
     --skip-auditwheel \
     -i "python3.${PY_MINOR}" \
     -o "${RESULTDIR}/wheelhouse${PY}/"
-  "${PY_BIN_DIR}/auditwheel" repair ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.whl \
-    --plat manylinux_2_28_x86_64 \
+  "${PY_BIN_DIR}/auditwheel" repair ${RESULTDIR}/wheelhouse${PY}/cykooz_heif*.whl \
+    --plat manylinux_2_34_x86_64 \
     -w "${RESULTDIR}/repaired"
   if [[ -n "$SDIST_OPT" ]]; then
-    cp ${RESULTDIR}/wheelhouse${PY}/cykooz.heif*.tar.gz "${RESULTDIR}/repaired/"
+    cp ${RESULTDIR}/wheelhouse${PY}/cykooz_heif*.tar.gz "${RESULTDIR}/repaired/"
     SDIST_OPT=""
   fi
   find /cargo_target/release/build/ -maxdepth 1 -name "pyo3*" -type d -print0 | xargs -0 rm -r

@@ -12,13 +12,13 @@ crate-type = ["cdylib"]
 
 
 [dependencies]
-pyo3 = "0.26.0"
+pyo3 = "0.29.2"
 
 
 [dependencies.libheif-rs]
-version = "2.4.0"
+version = "3.0.0"
 default-features = false
-features = ["v1_18"]
+features = ["embedded-libheif", "v1_18"]
 
 
 [profile.release]

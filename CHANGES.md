@@ -1,17 +1,34 @@
 # CHANGELOG
 
+## 2.0.0 (2026-08-18)
+
+### Features
+
+- Added support of `Pillow` >= 12.0.
+- Added support for Python 3.14.
+
+### Changes
+
+- **BREAKING CHANGES:**
+    - Package renamed from `cykooz.heif` to `cykooz_heif`.
+    - Dropped support of Python 3.9.
+- Updated version of ``libheif-rs`` to 3.0.0
+- Updated version of ``pyo3`` to 0.29.2.
+
 ## 1.3.0 (2025-09-11)
 
 ### Changes
 
-- Updated version of ``libheif-rs`` to 2.4.0 (fixed error with reading from a file-like object)
+- Updated version of ``libheif-rs`` to 2.4.0 (fixed error with reading from a
+  file-like object)
 - Updated version of ``pyo3`` to 0.26.
 
 ## 1.2.0 (2025-04-08)
 
 ### Changes
 
-- Updated version of ``libheif-rs`` to 2.0.0 (improved support HEIC-files from iOS 18+)
+- Updated version of ``libheif-rs`` to 2.0.0 (improved support HEIC-files from
+  iOS 18+)
 - Updated version of ``pyo3`` to 0.24.
 
 ## 1.1.0 (2025-02-04)
@@ -165,8 +182,8 @@
 
 ### Features
 
-- Added ``RawHeifImage.check_file_type`` to check by first bytes of file
-  what it file is supported by ``libheif``.
+- Added ``RawHeifImage.check_file_type`` to check by first bytes of file what it
+  file is supported by ``libheif``.
 - Added opener plugin for ``Pillow``.
 
 ## 0.3 (2019-06-28)

@@ -1,8 +1,9 @@
-# cykooz.heif
+# cykooz-heif
 
-`cykooz.heif` is simple python wrapper for the library [libheif-rs](https://crates.io/crates/libheif-rs).
+`cykooz-heif` is simple python wrapper for the
+library [libheif-rs](https://crates.io/crates/libheif-rs).
 
-`RawHeifImage` is a simple wrapper around low level HEIF-decoder.
+`RawHeifImage` is a simple wrapper around low-level HEIF-decoder.
 
 [CHANGELOG](https://github.com/Cykooz/cykooz.heif/blob/master/CHANGES.md)
 
@@ -11,7 +12,7 @@
 Read HEIF-image from a file:
 
 ```python
-from cykooz.heif.image import RawHeifImage
+from cykooz_heif.image import RawHeifImage
 
 
 img = RawHeifImage.from_path('data/test.heif')
@@ -23,10 +24,10 @@ assert img.stride == 9072
 assert len(img.exif) == 2026
 ```
 
-Read HEIF-image from file-like object:
+Read HEIF-image from a file-like object:
 
 ```python
-from cykooz.heif.image import RawHeifImage
+from cykooz_heif.image import RawHeifImage
 
 
 with open('data/test.heif') as fp:
@@ -39,7 +40,7 @@ Also package provides an opener plugin for `PIL` (`Pillow`):
 
 ```python
 from PIL import Image
-from cykooz.heif.pil import register_heif_opener
+from cykooz_heif.pil import register_heif_opener
 
 
 register_heif_opener()

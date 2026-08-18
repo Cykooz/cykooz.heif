@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.1 (2026-08-18)
+
+### Bug Fixes
+
+- Fixed README.md.
+
 ## 2.0.0 (2026-08-18)
 
 ### Features
